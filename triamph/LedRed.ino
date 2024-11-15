@@ -1,5 +1,5 @@
 const uint8_t LED_RED = 23;
-const ulong red_led_off_delay = 3000;
+const ulong red_led_off_delay = 2900;
 const ulong red_led_on_delay = 100;
 
 void blinkRedLED(void *arg){
