@@ -1,5 +1,5 @@
 const uint8_t LED_ORANGE = 16;
-const ulong periode_led_orange = 300;
+const ulong periode_led_orange = 250;
 
 void blinkOrangeLED(void *arg){
   pinMode(LED_ORANGE, OUTPUT);
