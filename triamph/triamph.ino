@@ -1,17 +1,21 @@
 #define CORE_1 0
 #define CORE_2 1
+#include <esp_now.h>
+#include <WiFi.h>
 #define BAUD_RATE 115200
 
+//functions
 void setup() {
+  //Serial monitor
   Serial.begin(BAUD_RATE);
-  CreateTasksForLedOrange();
-  CreateTasksForLedGreen();
-  CreateTasksForLedRed();
-  CreateTasksForPotentio();
-  CreateTasksForStepper();
-  CreateTasksForServo();
+  setup_now();
+  //Tasks
+  //CreateTasksForLedRed();
+  //CreateTasksForStepper();
+  //CreateTasksForServo();
+  CreateTasksForMotors();
 }
-
 void loop() {
-  // nothing to do here
+  loop_now();
+  delay(10);
 } 

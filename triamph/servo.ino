@@ -10,7 +10,7 @@ Servo myServo;
 void servo_function(void *arg){
   myServo.attach(4);
   while(1){
-    myServo.write(lecture_potentio_mapped);
+    myServo.write(3000);
     delay(50);
   }
 }
