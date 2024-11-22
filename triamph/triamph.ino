@@ -9,13 +9,14 @@ void setup() {
   //Serial monitor
   Serial.begin(BAUD_RATE);
   setup_now();
+  setup_motors();
   //Tasks
   //CreateTasksForLedRed();
   //CreateTasksForStepper();
   //CreateTasksForServo();
-  CreateTasksForMotors();
 }
 void loop() {
   loop_now();
+  loop_motors();
   delay(10);
 } 

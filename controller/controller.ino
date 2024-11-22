@@ -14,4 +14,5 @@ void setup(){
 void loop(){
   // nothing to do here
   loop_now();
+  delay(10);
 }
