@@ -6,13 +6,16 @@
 
 void setup(){
   Serial.begin(BAUD_RATE);
-  setup_gaz();
   setup_now();
+  setup_gaz();
+  setup_joystick();
+  setup_InfoLed();
   CreateTasksForGaz();
 }
 
 void loop(){
   // nothing to do here
   loop_now();
+  //loop_InfoLed();
   delay(10);
 }

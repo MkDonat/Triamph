@@ -6,6 +6,7 @@ void setup_gaz(){
 void monitoring_gaz_datas(void *arg){
   for(;;){
       data.gaz_lecture = analogRead(gaz_pin);
+      delay(10);
   }
 }
 void CreateTasksForGaz(){
@@ -14,7 +15,7 @@ void CreateTasksForGaz(){
     ,
     NULL // Stack Depth
     ,
-    5 //Priority
+    1 //Priority
     ,
     NULL //Task handle
     ,

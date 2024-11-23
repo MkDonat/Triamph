@@ -1,6 +1,7 @@
 // Controller MAC Adress: CC:DB:A7:3F:5C:EC
 // Triamph MAC Address : CC:DB:A7:33:23:B8
 uint8_t receiverMacAddress[] = {0xCC,0xDB,0xA7,0x33,0x23,0xB8};
+bool connected_to_peer = false;
 
 esp_now_peer_info_t peerInfo;
 
@@ -14,18 +15,17 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 void setup_now() {
   WiFi.mode(WIFI_STA);
   // Init ESP-NOW
-  if (esp_now_init() != ESP_OK) 
-  {
+  if (esp_now_init() != ESP_OK) {
     Serial.println("Error initializing ESP-NOW");
     return;
   }
-  else
-  {
+  else{
+    connected_to_peer = true;
     Serial.println("Succes: Initialized ESP-NOW");
   }
   esp_now_register_send_cb(OnDataSent);
   // Register peer
-  //peerInfo.ifidx=WIFI_IF_AP;
+  // peerInfo.ifidx=WIFI_IF_AP;
   memcpy(peerInfo.peer_addr, receiverMacAddress, 6);
   peerInfo.channel = 0;  
   peerInfo.encrypt = false;

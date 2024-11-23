@@ -19,6 +19,9 @@ void setup_now() {
     Serial.println("Error initializing ESP-NOW");
     return;
   }
+  else{
+    //Alumer la led témoin;
+  }
   esp_now_register_recv_cb(OnDataRecv);
 }
  
