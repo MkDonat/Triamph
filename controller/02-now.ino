@@ -7,9 +7,9 @@ esp_now_peer_info_t peerInfo;
 
 // callback when data is sent
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
-  Serial.print("\r\nLast Packet Send Status:\t ");
-  Serial.println(status);
-  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Message sent" : "Message failed");
+  //Serial.print("\r\nLast Packet Send Status:\t ");
+  //Serial.println(status);
+  //Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Message sent" : "Message failed");
 }
 
 void setup_now() {
@@ -46,10 +46,10 @@ void loop_now() {
   esp_err_t result = esp_now_send(receiverMacAddress, (uint8_t *) &data, sizeof(data));
   if (result == ESP_OK) 
   {
-    Serial.println("Sent with success");
+    //Serial.println("Sent with success");
   }
   else 
   {
-    Serial.println("Error sending the data");
+    //Serial.println("Error sending the data");
   }    
 }

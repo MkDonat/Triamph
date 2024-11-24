@@ -9,7 +9,7 @@ void setup(){
   setup_now();
   setup_gaz();
   setup_joystick();
-  setup_InfoLed();
+  //setup_InfoLed();
   CreateTasksForGaz();
 }
 
@@ -17,5 +17,6 @@ void loop(){
   // nothing to do here
   loop_now();
   //loop_InfoLed();
+  monitoring_joystick_datas();
   delay(10);
 }

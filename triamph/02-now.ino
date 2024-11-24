@@ -9,7 +9,7 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t *incomingData, int 
   }
   memcpy(&receivedData, incomingData, sizeof(receivedData));
   lastRecvTime = millis();
-  Serial.printf("gaz: %d/4095\n",receivedData.gaz_lecture);
+  //Serial.printf("gaz: %d/4095\n",receivedData.gaz_lecture);
 }
 
 void setup_now() { 

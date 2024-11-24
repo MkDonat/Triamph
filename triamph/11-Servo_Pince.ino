@@ -6,7 +6,7 @@ Servo Pincegauche;
 const int ouverturePince = 180; // Open position
 const int fermeturePince = 0;   // Close position
 // Push button for Pince
-const int PincebuttonPin = 27;
+const int PincebuttonPin = 35;
 int PincebuttonState = LOW;
 int lastPincebuttonState = LOW;
 unsigned long lastDebounceTimePince = 0;

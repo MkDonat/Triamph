@@ -9,7 +9,7 @@ const int BacCharge = 70;
 const int BacDecharge = 110;
 
 // Pushbutton for charge
-const int ChargebuttonPin = 15; // 15-pin is High during boot - conveniant for this usage
+const int ChargebuttonPin = 39; 
 int ChargebuttonState = LOW;
 int lastChargebuttonState = LOW;
 unsigned long lastDebounceTimeCharge = 0;
