@@ -22,14 +22,9 @@ byte IN4_pin = 33;
 const byte pin_moteur_gauche = 13;
 const byte pin_moteur_droit = 14;
 const byte cannal_moteurs = 0;
-const byte resolution = 16;
+const byte resolution = 12;
 uint32_t freq = 500;
-uint32_t max_duty = (int)(pow(2, resolution) - 1);
-uint32_t semi_duty = int(50*(max_duty/100));
 uint32_t duty = 0; //Rapport Cyclique courrant
-uint32_t treshold_trigger_duty = int(35*(max_duty/100)); //Rapport Cyclique de déclenchement en %
-uint32_t min_operating_duty = int(15*(max_duty/100)); //Rapport Cyclique min de fonctionnement en %
-bool motor_trigged = false;
 
 void setup_motors() {
   //Driver
@@ -60,16 +55,11 @@ void setup_motors() {
 }
 void loop_motors(){
   //Formattage des données de la commande des gaz!
-  duty = map(
-    receivedData.gaz_lecture,
-    0 , 4095 //ESP32 native reading resolution.
-    ,
-    min_operating_duty , max_duty
-    );
+  duty = receivedData.gaz_lecture;
+  Serial.println(receivedData.gaz_lecture);
   selection_du_mode();
   maj_signaux_directionnels(); //Signaux envoyé sur le driver
   drive_motors(); // Action à effectuer suivant le mode
-  Serial.println(Mode_Moteur_actuel);
 }
 void selection_du_mode(){// Sélection du mode suivant les commandes.
   // Mise à jour de la direction
@@ -173,25 +163,15 @@ void marche_arriere(){
   );
 }
 void rotation_horaire(){
-  ledcWrite(
-    pin_moteur_gauche //uint8_t pin
-    , 
-    duty //uint32_t duty
-  );
-  ledcWrite(
-    pin_moteur_droit //uint8_t pin
+  ledcWriteChannel(
+    cannal_moteurs //uint8_t channel
     , 
     duty //uint32_t duty
   );
 }
 void rotation_anti_horaire(){
-  ledcWrite(
-    pin_moteur_gauche //uint8_t pin
-    , 
-    duty //uint32_t duty
-  );
-  ledcWrite(
-    pin_moteur_droit //uint8_t pin
+  ledcWriteChannel(
+    cannal_moteurs //uint8_t channel
     , 
     duty //uint32_t duty
   );

@@ -36,11 +36,11 @@ void monitoring_joystick_datas(){
   else{
     data.joystick_y_value = 0;
   }
-  Serial.printf(
+  /*Serial.printf(
     "raw_x: %ld , x: %ld , raw_y: %ld , y: %ld\n"
     ,joystick_x_raw_value
     ,data.joystick_x_value
     ,joystick_y_raw_value
     ,data.joystick_y_value
-  );
+  );*/
 }

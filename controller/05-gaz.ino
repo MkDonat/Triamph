@@ -19,6 +19,6 @@ void CreateTasksForGaz(){
     ,
     NULL //Task handle
     ,
-    CORE_1 // Core on which the task will run
+    CORE_2 // Core on which the task will run
   );
 }

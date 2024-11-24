@@ -10,6 +10,11 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   //Serial.print("\r\nLast Packet Send Status:\t ");
   //Serial.println(status);
   //Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Message sent" : "Message failed");
+  if (status == ESP_NOW_SEND_SUCCESS) {
+    connected_to_peer = true;
+  } else {
+    connected_to_peer = false;
+  }
 }
 
 void setup_now() {
@@ -20,7 +25,6 @@ void setup_now() {
     return;
   }
   else{
-    connected_to_peer = true;
     Serial.println("Succes: Initialized ESP-NOW");
   }
   esp_now_register_send_cb(OnDataSent);
