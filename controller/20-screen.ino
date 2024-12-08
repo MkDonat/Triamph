@@ -2,7 +2,7 @@
 U8G2_SSD1309_128X64_NONAME2_1_4W_SW_SPI u8g2(
   U8G2_R0
   ,  
-  18 // SLAVE CLOCK (SCK)
+  18 // SLAVE CLOCK (SCK) ou (SCL)
   ,
   23 // SLAVE DATA (SDA)
   ,
@@ -48,7 +48,7 @@ void screen_loop(){
     u8g2.drawStr(116, 8, "Gaz");
     u8g2.setFont(u8g2_font_helvB08_tr);
     u8g2.drawStr(72, 40, "m/s");
-    Serial.println(connected_to_peer);
+    //Serial.println(connected_to_peer);
     if(connected_to_peer==true){
       u8g2.drawXBM(2, 2, 15, 16, image_connected_bits);
     }

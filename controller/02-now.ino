@@ -1,6 +1,6 @@
 // Controller MAC Adress: CC:DB:A7:3F:5C:EC
-// Triamph MAC Address : CC:DB:A7:33:23:B8
-uint8_t receiverMacAddress[] = {0xCC,0xDB,0xA7,0x33,0x23,0xB8};
+// Triamph MAC Address : F8:B3:B7:22:41:CC
+uint8_t receiverMacAddress[] = {0xF8,0xB3,0xB7,0x22,0x41,0xCC};
 bool connected_to_peer = false;
 
 esp_now_peer_info_t peerInfo;
