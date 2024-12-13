@@ -47,7 +47,7 @@ void ouverture_fermeture_pince(void *arg){
 }
 
 // Create task for handling charge and discharge operations
-void CreateTaskForPince(){
+void CreateTasksForPince(){
   if (xTaskCreatePinnedToCore(
         ouverture_fermeture_pince,      // Task function
         "Ouvrir/fermer",   // Task name

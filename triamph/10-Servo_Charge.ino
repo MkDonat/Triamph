@@ -5,8 +5,8 @@
 // Servo Configuration
 Servo servodroite;
 Servo servogauche;
-const int BacCharge = 70;
-const int BacDecharge = 110;
+const int BacCharge = 70; //position chargé
+const int BacDecharge = 110; //position déchargé
 
 // Pushbutton for charge
 const int ChargebuttonPin = 13;
@@ -50,7 +50,7 @@ void charge_decharge(void *arg) {
 }
 
 // Create task for handling charge and discharge operations
-void CreateTaskForChargement(){
+void CreateTasksForChargement(){
   if (xTaskCreatePinnedToCore(
         charge_decharge,      // Task function
         "Charge/Discharge",   // Task name
