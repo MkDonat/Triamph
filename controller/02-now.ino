@@ -47,7 +47,7 @@ void setup_now() {
  
 void loop_now() {
   //Sendind Data
-  esp_err_t result = esp_now_send(receiverMacAddress, (uint8_t *) &data, sizeof(data));
+  esp_err_t result = esp_now_send(receiverMacAddress, (uint8_t *) &SendingData, sizeof(SendingData));
   if (result == ESP_OK) 
   {
     //Serial.println("Sent with success");

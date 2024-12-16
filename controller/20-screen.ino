@@ -26,16 +26,16 @@ int gaz_ramp_height = 0;
 void screen_setup(){
   u8g2.begin();
 }
-void screen_loop(){
+void loop_screen(){
   u8g2.firstPage();
   do{
     gaz_ramp_y = map(
-      data.gaz_lecture,
+      SendingData.gaz_lecture,
       0, 4095,
       63, 11
     );
     gaz_ramp_height = map(
-      data.gaz_lecture,
+      SendingData.gaz_lecture,
       0, 4095,
       2, 51
     );

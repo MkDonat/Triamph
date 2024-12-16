@@ -7,7 +7,7 @@ enum ModesMoteurs {
   ROTATION_ANTI_HORAIRE
 };
 ModesMoteurs Mode_Moteur_actuel = MODE_STANDBY;
-//Direction
+//Direction de déplacement
 typedef struct direction{
   int8_t x = 0; 
   int8_t y = 0;
@@ -54,9 +54,8 @@ void setup_motors() {
   );
 }
 void loop_motors(){
-  //Formattage des données de la commande des gaz!
   duty = receivedData.gaz_lecture;
-  Serial.println(receivedData.gaz_lecture);
+  //Serial.println(receivedData.gaz_lecture);
   selection_du_mode();
   maj_signaux_directionnels(); //Signaux envoyé sur le driver
   drive_motors(); // Action à effectuer suivant le mode

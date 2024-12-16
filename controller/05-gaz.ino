@@ -5,8 +5,8 @@ void setup_gaz(){
 }
 void monitoring_gaz_datas(void *arg){
   for(;;){
-      data.gaz_lecture = analogRead(gaz_pin);
-      delay(10);
+      SendingData.gaz_lecture = analogRead(gaz_pin);
+      vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }
 void CreateTasksForGaz(){

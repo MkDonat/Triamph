@@ -8,4 +8,4 @@ typedef struct PacketData { //150 Bytes MAX
   bool joystick_b_value = false;
 } PacketData;
 
-PacketData data;
+PacketData SendingData;

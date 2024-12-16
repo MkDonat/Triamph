@@ -1,11 +1,11 @@
-//Communication
+//COMMUNICATIONS
 #include <esp_now.h>
 #include <WiFi.h>
 #define BAUD_RATE 115200
-//Coeurs
+//CORES
 #define CORE_1 0
 #define CORE_2 1
-//Screen
+//SCREEN
 #include <Arduino.h>
 #include <U8g2lib.h>
 #ifdef U8X8_HAVE_HW_SPI
@@ -29,8 +29,8 @@ void setup(){
 void loop(){
   // nothing to do here
   loop_now();
-  screen_loop();
+  loop_screen();
   //loop_InfoLed();
-  monitoring_joystick_datas();
+  loop_joystick();
   //delay(10);
 }
