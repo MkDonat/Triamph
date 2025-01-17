@@ -1,8 +1,17 @@
+//SCREEN LIBS
+//#include <Arduino.h>
+#include <U8g2lib.h>
+#ifdef U8X8_HAVE_HW_SPI
+#include <SPI.h>
+#endif
+#ifdef U8X8_HAVE_HW_I2C
+#include <Wire.h>
+#endif
 //SPI setup pins
 U8G2_SSD1309_128X64_NONAME2_1_4W_SW_SPI u8g2(
   U8G2_R0
   ,  
-  18 // SLAVE CLOCK (SCK) ou (SCL)
+  18 // SLAVE CLOCK (SCK) or (SCL)
   ,
   23 // SLAVE DATA (SDA)
   ,
@@ -23,48 +32,64 @@ static const unsigned char image_cross_contour_bits[] = {0x00,0x00,0x00,0x00,0x0
 int gaz_ramp_y = 0;
 int gaz_ramp_height = 0;
 
-void screen_setup(){
+void screen_refresh(void *arg){
   u8g2.begin();
+  for(;;){
+    u8g2.firstPage();
+    do{
+      gaz_ramp_y = map(
+        SendingData.gaz_lecture,
+        0, 4095,
+        63, 11
+      );
+      gaz_ramp_height = map(
+        SendingData.gaz_lecture,
+        0, 4095,
+        2, 51
+      );
+      u8g2.clearBuffer();
+      u8g2.setFontMode(1);
+      u8g2.setBitmapMode(1);
+      u8g2.drawFrame(120, 9, 6, 55);
+      u8g2.drawBox(122, gaz_ramp_y, 2, gaz_ramp_height); //progress
+      u8g2.setFont(u8g2_font_4x6_tr);
+      u8g2.drawStr(116, 8, "Gaz");
+      u8g2.setFont(u8g2_font_helvB08_tr);
+      u8g2.drawStr(72, 40, "m/s");
+      //Serial.println(connected_to_peer);
+      if(connected_to_peer==true){
+        u8g2.drawXBM(2, 2, 15, 16, image_connected_bits);
+      }
+      else if (connected_to_peer==false){
+        u8g2.drawXBM(4, 1, 11, 16, image_cross_contour_bits);
+      }
+      u8g2.setFont(u8g2_font_profont29_tr);
+      u8g2.drawStr(37, 46, "00");
+      u8g2.drawXBM(2, 46, 19, 16, image_car_bits);
+      u8g2.setFont(u8g2_font_5x8_tr);
+      u8g2.drawStr(20, 8, "TRIAMPH");
+      u8g2.drawXBM(25, 9, 26, 8, image_Battery_triamph_bits);
+      u8g2.drawXBM(105, 54, 11, 8, image_GameMode_bits);
+      u8g2.drawStr(77, 8, "CONTROL");
+      u8g2.drawXBM(80, 9, 26, 8, image_Battery_controller_bits);
+      u8g2.sendBuffer();
+    }
+    while(u8g2.nextPage());
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+  }
 }
-void loop_screen(){
-  u8g2.firstPage();
-  do{
-    gaz_ramp_y = map(
-      SendingData.gaz_lecture,
-      0, 4095,
-      63, 11
-    );
-    gaz_ramp_height = map(
-      SendingData.gaz_lecture,
-      0, 4095,
-      2, 51
-    );
-    u8g2.clearBuffer();
-    u8g2.setFontMode(1);
-    u8g2.setBitmapMode(1);
-    u8g2.drawFrame(120, 9, 6, 55);
-    u8g2.drawBox(122, gaz_ramp_y, 2, gaz_ramp_height); //progress
-    u8g2.setFont(u8g2_font_4x6_tr);
-    u8g2.drawStr(116, 8, "Gaz");
-    u8g2.setFont(u8g2_font_helvB08_tr);
-    u8g2.drawStr(72, 40, "m/s");
-    //Serial.println(connected_to_peer);
-    if(connected_to_peer==true){
-      u8g2.drawXBM(2, 2, 15, 16, image_connected_bits);
-    }
-    else if (connected_to_peer==false){
-      u8g2.drawXBM(4, 1, 11, 16, image_cross_contour_bits);
-    }
-    u8g2.setFont(u8g2_font_profont29_tr);
-    u8g2.drawStr(37, 46, "00");
-    u8g2.drawXBM(2, 46, 19, 16, image_car_bits);
-    u8g2.setFont(u8g2_font_5x8_tr);
-    u8g2.drawStr(20, 8, "TRIAMPH");
-    u8g2.drawXBM(25, 9, 26, 8, image_Battery_triamph_bits);
-    u8g2.drawXBM(105, 54, 11, 8, image_GameMode_bits);
-    u8g2.drawStr(77, 8, "CONTROL");
-    u8g2.drawXBM(80, 9, 26, 8, image_Battery_controller_bits);
-    u8g2.sendBuffer();
-  }while(u8g2.nextPage());
-  vTaskDelay(10 / portTICK_PERIOD_MS);
+void CreateTasksForScreen(){
+  xTaskCreatePinnedToCore(
+    screen_refresh,"screen refresh"
+    ,
+     2048
+    ,
+    NULL // Stack Depth
+    ,
+    1 //Priority
+    ,
+    NULL //Task handle
+    ,
+    CORE_2 // Core on which the task will run
+  );
 }
