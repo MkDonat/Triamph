@@ -12,7 +12,7 @@ typedef struct {
   const int16_t max_analog_lecture = 4095; // 12-bits
   int16_t x_offset = -238; // décallage du au vieillissement
   int16_t y_offset = -138; // décallage du au vieillissement
-  bool printOnSerial = true;
+  bool printOnSerial = false;
 } JoystickDatas;
 JoystickDatas joystick;
 
@@ -43,8 +43,8 @@ void joystick_computations(void *arg){
       joystick.tor_y = 0;
     }
     //update datas to send
-    SendingData.joystick_x_value = joystick.tor_x;
-    SendingData.joystick_x_value = joystick.tor_x;            
+    SendingData.joystick_tor_x = joystick.tor_x;
+    SendingData.joystick_tor_y = joystick.tor_x;            
     //print to serial
     if(joystick.printOnSerial){
       Serial.printf(
@@ -58,7 +58,7 @@ void joystick_computations(void *arg){
       );
     }
     //Delay
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    vTaskDelay(pdMS_TO_TICKS(10));
   }
 }
 void CreateTasksForJoystick(){

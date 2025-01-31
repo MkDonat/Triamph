@@ -1,9 +1,9 @@
 typedef struct { //150 Bytes MAX
-  // gaz command
+  //COMMANDE DES GAZ
   uint32_t gaz_value = 0;
-  // joystick
+  //COMMANDE JOYSTICK
   int8_t joystick_tor_x = 0;
   int8_t joystick_tor_y = 0;
-} ReceivedPacketData;
+} SendingPacketData;
 
-ReceivedPacketData receivedData;
+SendingPacketData SendingData;

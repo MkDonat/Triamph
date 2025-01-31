@@ -17,7 +17,7 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   }
 }
 
-void setup_now() {
+void setup_now_sender() {
   WiFi.mode(WIFI_STA);
   // Init ESP-NOW
   if (esp_now_init() != ESP_OK) {
@@ -45,7 +45,7 @@ void setup_now() {
   }  
 }
  
-void loop_now() {
+void loop_now_sender() {
   //Sendind Data
   esp_err_t result = esp_now_send(receiverMacAddress, (uint8_t *) &SendingData, sizeof(SendingData));
   if (result == ESP_OK) 

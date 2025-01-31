@@ -34,36 +34,36 @@ void setup_motors() {
   pinMode(IN4_pin,OUTPUT);
   //Attach Left Motor
   ledcAttachChannel(
-  pin_moteur_gauche //uint8_t pin
-  , 
-  freq //uint32_t freq
-  ,
-  resolution //uint8_t resolution
-  ,
-  cannal_moteurs //int8_t channel
+    pin_moteur_gauche //uint8_t pin
+    , 
+    freq //uint32_t freq
+    ,
+    resolution //uint8_t resolution
+    ,
+    cannal_moteurs //int8_t channel
   );
   //Attach Right Motor
   ledcAttachChannel(
-  pin_moteur_droit //uint8_t pin
-  , 
-  freq //uint32_t freq
-  ,
-  resolution //uint8_t resolution
-  ,
-  cannal_moteurs //int8_t channel
+    pin_moteur_droit //uint8_t pin
+    , 
+    freq //uint32_t freq
+    ,
+    resolution //uint8_t resolution
+    ,
+    cannal_moteurs //int8_t channel
   );
 }
 void loop_motors(){
-  duty = receivedData.gaz_lecture;
-  //Serial.println(receivedData.gaz_lecture);
+  duty = receivedData.gaz_value;
+  //Serial.println(receivedData.gaz_value);
   selection_du_mode();
   maj_signaux_directionnels(); //Signaux envoyé sur le driver
   drive_motors(); // Action à effectuer suivant le mode
 }
 void selection_du_mode(){// Sélection du mode suivant les commandes.
   // Mise à jour de la direction
-  direction_triamph.y = receivedData.joystick_y_value;
-  direction_triamph.x = receivedData.joystick_x_value;
+  direction_triamph.y = receivedData.joystick_tor_y;
+  direction_triamph.x = receivedData.joystick_tor_x;
   if(direction_triamph.y != 0){
     switch(direction_triamph.y){
       case 1:

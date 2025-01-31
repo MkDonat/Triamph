@@ -48,7 +48,6 @@ void charge_decharge(void *arg) {
     lastChargebuttonState = readingCharge;
   }
 }
-
 // Create task for handling charge and discharge operations
 void CreateTaskForChargement(){
   if (xTaskCreatePinnedToCore(

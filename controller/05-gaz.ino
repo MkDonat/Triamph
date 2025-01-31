@@ -1,5 +1,5 @@
 typedef struct{
-  const byte pin = 35;
+  const uint8_t pin = 35;
   uint16_t value;
   bool printOnSerial = false;
 }GAZ;
@@ -10,7 +10,7 @@ void monitoring_gaz_datas(void *arg){
   for(;;){
     gaz.value = analogRead(gaz.pin);
     //Update to sending data
-    SendingData.gaz_lecture = gaz.value;
+    SendingData.gaz_value = gaz.value;
     //Print on Serial
     if (gaz.printOnSerial){
       printf(
@@ -20,7 +20,7 @@ void monitoring_gaz_datas(void *arg){
       );
     }
     //Delay
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    vTaskDelay(pdMS_TO_TICKS(10));
   }
 }
 void CreateTasksForGaz(){

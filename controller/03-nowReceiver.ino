@@ -12,7 +12,7 @@ void OnDataRecv(const esp_now_recv_info *info, const uint8_t *incomingData, int 
   //Serial.printf("gaz: %d/4095\n",receivedData.gaz_lecture);
 }
 
-void setup_now() { 
+void setup_now_receiver() { 
   WiFi.mode(WIFI_STA);
   // Init ESP-NOW
   if (esp_now_init() != ESP_OK) {
@@ -25,7 +25,7 @@ void setup_now() {
   esp_now_register_recv_cb(OnDataRecv);
 }
  
-void loop_now() {
+void loop_now_receiver() {
   //Check Signal lost.
   unsigned long now = millis();
   if ( now - lastRecvTime > SIGNAL_TIMEOUT ) {

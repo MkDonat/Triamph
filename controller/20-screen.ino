@@ -1,5 +1,4 @@
 //SCREEN LIBS
-//#include <Arduino.h>
 #include <U8g2lib.h>
 #ifdef U8X8_HAVE_HW_SPI
 #include <SPI.h>
@@ -31,6 +30,8 @@ static const unsigned char image_cross_contour_bits[] = {0x00,0x00,0x00,0x00,0x0
 //Variables
 int gaz_ramp_y = 0;
 int gaz_ramp_height = 0;
+char buffer[32];
+uint16_t *tof = &receivedData.tofSensorData_singleMillimetersValue; 
 
 void screen_refresh(void *arg){
   u8g2.begin();
@@ -38,12 +39,12 @@ void screen_refresh(void *arg){
     u8g2.firstPage();
     do{
       gaz_ramp_y = map(
-        SendingData.gaz_lecture,
+        SendingData.gaz_value,
         0, 4095,
         63, 11
       );
       gaz_ramp_height = map(
-        SendingData.gaz_lecture,
+        SendingData.gaz_value,
         0, 4095,
         2, 51
       );
@@ -64,7 +65,8 @@ void screen_refresh(void *arg){
         u8g2.drawXBM(4, 1, 11, 16, image_cross_contour_bits);
       }
       u8g2.setFont(u8g2_font_profont29_tr);
-      u8g2.drawStr(37, 46, "00");
+      sprintf(buffer,"%d",*tof);
+      u8g2.drawStr(37, 46, buffer);
       u8g2.drawXBM(2, 46, 19, 16, image_car_bits);
       u8g2.setFont(u8g2_font_5x8_tr);
       u8g2.drawStr(20, 8, "TRIAMPH");
@@ -75,7 +77,7 @@ void screen_refresh(void *arg){
       u8g2.sendBuffer();
     }
     while(u8g2.nextPage());
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    vTaskDelay(pdMS_TO_TICKS(10));
   }
 }
 void CreateTasksForScreen(){

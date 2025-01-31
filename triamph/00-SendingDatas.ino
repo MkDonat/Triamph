@@ -1,5 +1,5 @@
 typedef struct { //150 Bytes MAX
   uint16_t tofSensorData_singleMillimetersValue;
-} ReceivedPacketData;
+} SendingPacketData;
 
-ReceivedPacketData receivedData;
+SendingPacketData SendingData;

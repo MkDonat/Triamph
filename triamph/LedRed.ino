@@ -7,9 +7,9 @@ void blinkRedLED(void *arg){
   digitalWrite(LED_RED, 0);
   while(1){
     digitalWrite(LED_RED, 1);
-    delay(red_led_on_delay);
+    vTaskDelay(pdMS_TO_TICKS(red_led_on_delay));
     digitalWrite(LED_RED, 0);
-    delay(red_led_off_delay);
+    vTaskDelay(pdMS_TO_TICKS(red_led_off_delay));
   }
 }
 void CreateTasksForLedRed(){
