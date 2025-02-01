@@ -14,7 +14,7 @@ void vTaskToFSensor(void *arg){
     tofSensorData.sda_pin,//SDA
     tofSensorData.scl_pin //SCL
     ); 
-  Serial.begin(115200);
+  //Serial.begin(115200);
   if(tofSensor.init()!= true){
     Serial.print("Failed init");
   }
@@ -22,7 +22,7 @@ void vTaskToFSensor(void *arg){
     uint16_t sensorValue;
     *tofSensorData.singleMillimetersValue = tofSensor.readRangeSingleMillimeters();
     //tofSensor.timeoutOccurred();
-    Serial.printf("Value: %d \n",sensorValue);
+    //Serial.printf("Value: %d \n",sensorValue);
     vTaskDelay(pdMS_TO_TICKS(10));
   }
 }

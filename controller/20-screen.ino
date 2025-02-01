@@ -34,6 +34,7 @@ char buffer[32];
 uint16_t *tof = &receivedData.tofSensorData_singleMillimetersValue; 
 
 void screen_refresh(void *arg){
+  Serial.println(*tof);
   u8g2.begin();
   for(;;){
     u8g2.firstPage();

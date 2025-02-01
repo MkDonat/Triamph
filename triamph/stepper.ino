@@ -10,7 +10,7 @@ void stepper_one_revolution(void *arg){
   // set the speed at 60 rpm:
   myStepper.setSpeed(30);
   // initialize the serial port:
-  while(1){
+  for(;;){
   // step one revolution  in one direction:
   //Serial.println("clockwise");
   myStepper.step(stepsPerRevolution);
