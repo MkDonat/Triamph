@@ -1,4 +1,4 @@
-typedef struct { //150 Bytes MAX
+typedef struct { //250 Bytes MAX
   // gaz command
   uint32_t gaz_value = 0;
   // joystick

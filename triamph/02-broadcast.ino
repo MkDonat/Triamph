@@ -56,7 +56,8 @@ typedef struct {
 } __attribute__((packed)) esp_now_data_t;
 
 /* Global Variables */
-bool connected_to_peer = false;
+bool receiving_data = false;
+bool sending_data = false;
 uint32_t self_priority = 0;          // Priority of this device
 uint8_t current_peer_count = 0;      // Number of peers that have been found
 bool device_is_master = false;       // Flag to indicate if this device is the master
@@ -109,7 +110,7 @@ public:
       return;
     }
     memcpy(&receivedData, data, sizeof(receivedData));
-    
+    receiving_data = true;
     esp_now_data_t *msg = (esp_now_data_t *)data;
 
     /*
@@ -143,7 +144,12 @@ public:
     if (broadcast) {
       log_i("Broadcast message reported as sent %s", success ? "successfully" : "unsuccessfully");
     } else {
-      log_i("Unicast message reported as sent %s to peer " MACSTR, success ? "successfully" : "unsuccessfully", MAC2STR(addr()));
+      log_i("Unicast message reported as sent %s to peer " MACSTR, success ? "successfully" : "unsuccessfully", MAC2STR(addr())); 
+    }
+    if(success){
+      sending_data = true;
+    }else{
+      sending_data = false;
     }
   }
 };
@@ -208,7 +214,7 @@ void register_new_peer(const esp_now_recv_info_t *info, const uint8_t *data, int
 void setup_broadcast() {
   uint8_t self_mac[6];
 
-  Serial.begin(115200);
+  //Serial.begin(115200);
 
   // Initialize the Wi-Fi module
   WiFi.mode(WIFI_STA);
@@ -249,6 +255,8 @@ void setup_broadcast() {
 }
 
 void loop_broadcast() {
+  receiving_data = false;
+  sending_data = false;
   // Broadcast the priority to find the master
   if (!broadcast_peer.send_message((const uint8_t *)&SendingData, sizeof(SendingData))) {
     Serial.println("Failed to broadcast message");

@@ -5,8 +5,8 @@ typedef struct {
   int16_t y_raw_datas;
   int16_t x_fixed_datas;
   int16_t y_fixed_datas;
-  int8_t  tor_x;
-  int8_t  tor_y;
+  int8_t  *tor_x = &SendingData.joystick_tor_x;
+  int8_t  *tor_y = &SendingData.joystick_tor_y;
   const int16_t x_err = 600;
   const int16_t y_err = 600;
   const int16_t max_analog_lecture = 4095; // 12-bits
@@ -16,7 +16,7 @@ typedef struct {
 } JoystickDatas;
 JoystickDatas joystick;
 
-void joystick_computations(void *arg){
+void vTaskGetJoystickInputs(void *arg){
   pinMode(joystick.x_pin, INPUT);
   pinMode(joystick.y_pin, INPUT);
   for(;;){
@@ -25,26 +25,23 @@ void joystick_computations(void *arg){
     joystick.x_fixed_datas = joystick.x_raw_datas - joystick.x_offset;
     joystick.y_fixed_datas = joystick.y_raw_datas - joystick.y_offset;
     if(joystick.x_fixed_datas > joystick.max_analog_lecture/2 + joystick.x_err){
-      joystick.tor_x = 1;
+      *joystick.tor_x = 1;
     }
     else if(joystick.x_fixed_datas < joystick.max_analog_lecture/2 - joystick.x_err){
-      joystick.tor_x = -1;
+      *joystick.tor_x = -1;
     }
     else{
-      joystick.tor_x = 0;
+      *joystick.tor_x = 0;
     }
     if(joystick.y_fixed_datas > joystick.max_analog_lecture/2 + joystick.y_err){
-      joystick.tor_y = 1;
+      *joystick.tor_y = 1;
     }
     else if(joystick.y_fixed_datas < joystick.max_analog_lecture/2 - joystick.y_err){
-      joystick.tor_y = -1;
+      *joystick.tor_y = -1;
     }
     else{
-      joystick.tor_y = 0;
-    }
-    //update datas to send
-    SendingData.joystick_tor_x = joystick.tor_x;
-    SendingData.joystick_tor_y = joystick.tor_x;            
+      *joystick.tor_y = 0;
+    }          
     //print to serial
     if(joystick.printOnSerial){
       Serial.printf(
@@ -53,8 +50,8 @@ void joystick_computations(void *arg){
         ,joystick.x_fixed_datas
         ,joystick.y_raw_datas
         ,joystick.y_fixed_datas
-        ,joystick.tor_x
-        ,joystick.tor_y
+        ,*joystick.tor_x
+        ,*joystick.tor_y
       );
     }
     //Delay
@@ -63,7 +60,7 @@ void joystick_computations(void *arg){
 }
 void CreateTasksForJoystick(){
   xTaskCreatePinnedToCore(
-    joystick_computations,"computing joystick datas"
+    vTaskGetJoystickInputs,"Getting Joysticks inputs"
     ,
      2048
     ,

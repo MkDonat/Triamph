@@ -2,8 +2,6 @@
 #define CORE_1 0
 #define CORE_2 1
 //COMMUNICATIONS
-//#include <esp_now.h>
-//#include <WiFi.h>
 #include "ESP32_NOW.h"
 #include "WiFi.h"
 #include <esp_mac.h>  // For the MAC2STR and MACSTR macros
@@ -15,12 +13,13 @@ void setup(){
   Serial.begin(SYSTEM_BAUD_RATE);
   setup_broadcast();
   //Creating FreeRTOS-Tasks
-  CreateTasksForJoystick();
+  CreateTaskForPID();
+  //CreateTasksForJoystick();
   CreateTasksForGaz();
   CreateTasksForScreen();
 }
 
 void loop(){
   loop_broadcast();
-  vTaskDelay(pdMS_TO_TICKS(10));
+  //vTaskDelay(pdMS_TO_TICKS(10));
 }

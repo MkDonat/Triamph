@@ -1,4 +1,4 @@
-//SCREEN LIBS
+//screen libs
 #include <U8g2lib.h>
 #ifdef U8X8_HAVE_HW_SPI
 #include <SPI.h>
@@ -20,70 +20,103 @@ U8G2_SSD1309_128X64_NONAME2_1_4W_SW_SPI u8g2(
   ,
   4 // RESET (RES)
 );
-//Variables - Lopaka
-static const unsigned char image_connected_bits[] = {0xe0,0x03,0x18,0x0c,0xe4,0x13,0x12,0x24,0xc9,0x49,0x25,0x52,0x95,0x54,0xc5,0x51,0x60,0x03,0xc0,0x01,0x80,0x00,0xc0,0x01,0x40,0x01,0x60,0x03,0x20,0x02,0x00,0x00};
-static const unsigned char image_car_bits[] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x80,0x3f,0x00,0x40,0x64,0x00,0x20,0xc4,0x00,0xfe,0xff,0x03,0xed,0xbf,0x07,0xd7,0x5f,0x07,0xaa,0xaf,0x02,0x10,0x40,0x00};
-static const unsigned char image_Battery_triamph_bits[] = {0xfe,0xff,0x7f,0x00,0x01,0x00,0x80,0x00,0x01,0x00,0x80,0x03,0x01,0x00,0x80,0x02,0x01,0x00,0x80,0x02,0x01,0x00,0x80,0x03,0x01,0x00,0x80,0x00,0xfe,0xff,0x7f,0x00};
-static const unsigned char image_GameMode_bits[] = {0x20,0x00,0xfe,0x03,0xfb,0x07,0x71,0x05,0xfb,0x07,0x8f,0x07,0x07,0x07,0x03,0x06};
-static const unsigned char image_Battery_controller_bits[] = {0xf8,0xff,0xff,0x01,0x04,0x00,0x00,0x02,0x07,0x00,0x00,0x02,0x05,0x00,0x00,0x02,0x05,0x00,0x00,0x02,0x07,0x00,0x00,0x02,0x04,0x00,0x00,0x02,0xf8,0xff,0xff,0x01};
-static const unsigned char image_cross_contour_bits[] = {0x00,0x00,0x00,0x00,0x00,0x00,0x04,0x01,0x8a,0x02,0x51,0x04,0x22,0x02,0x04,0x01,0x88,0x00,0x04,0x01,0x22,0x02,0x51,0x04,0x8a,0x02,0x04,0x01,0x00,0x00,0x00,0x00};
-//Variables
-int gaz_ramp_y = 0;
-int gaz_ramp_height = 0;
-char buffer[32];
-uint16_t *tof = &receivedData.tofSensorData_singleMillimetersValue; 
+//Lopaka variables
+static const unsigned char image_controller_icon_bits[] = {0x20,0x00,0xfe,0x03,0xfb,0x07,0x71,0x05,0xfb,0x07,0x8f,0x07,0x07,0x07,0x03,0x06};
+static const unsigned char image_sending_data_arrow_bits[] = {0x04,0x02,0x7f,0x02,0x04};
+static const unsigned char image_boat_icon_bits[] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x00,0x00,0x01,0x00,0x00,0x03,0x00,0x00,0x07,0x00,0x00,0x0f,0x00,0x00,0x01,0x00,0x00,0x01,0x00,0xfe,0xff,0x00,0xfe,0xff,0x00,0xfc,0x7f,0x00,0xf8,0x3f,0x00,0xc0,0x07,0x00};
+static const unsigned char image_icoming_data_arrow_bits[] = {0x10,0x20,0x7f,0x20,0x10};
 
-void screen_refresh(void *arg){
-  Serial.println(*tof);
+//Global variables
+
+void vTaskScreenUpdate(void *arg){
   u8g2.begin();
   for(;;){
     u8g2.firstPage();
     do{
-      gaz_ramp_y = map(
-        SendingData.gaz_value,
-        0, 4095,
-        63, 11
-      );
-      gaz_ramp_height = map(
-        SendingData.gaz_value,
-        0, 4095,
-        2, 51
-      );
       u8g2.clearBuffer();
       u8g2.setFontMode(1);
       u8g2.setBitmapMode(1);
-      u8g2.drawFrame(120, 9, 6, 55);
-      u8g2.drawBox(122, gaz_ramp_y, 2, gaz_ramp_height); //progress
-      u8g2.setFont(u8g2_font_4x6_tr);
-      u8g2.drawStr(116, 8, "Gaz");
-      u8g2.setFont(u8g2_font_helvB08_tr);
-      u8g2.drawStr(72, 40, "m/s");
-      //Serial.println(connected_to_peer);
-      if(connected_to_peer==true){
-        u8g2.drawXBM(2, 2, 15, 16, image_connected_bits);
+
+      // speed value
+      char buffer[32];
+      sprintf(
+        buffer,
+        "%d",
+        receivedData.tofSensorData_singleMillimetersValue
+      );
+      u8g2.setFont(u8g2_font_6x13_tr);
+      u8g2.drawStr(60, 30, buffer);
+
+      // triamph battery level
+      u8g2.setFont(u8g2_font_6x10_tr);
+      u8g2.drawStr(12, 13, "100");
+
+      // circle draw for cap
+      u8g2.drawEllipse(23, 40, 17, 16);
+
+      // label % triamph
+      u8g2.drawStr(30, 13, "%");
+
+      // controller icon
+      u8g2.drawXBM(76, 5, 11, 8, image_controller_icon_bits);
+
+      // label - cap
+      u8g2.drawStr(15, 51, "cap");
+
+      // sending data arrow
+      if(sending_data){
+        u8g2.drawXBM(62, 3, 7, 5, image_sending_data_arrow_bits);
       }
-      else if (connected_to_peer==false){
-        u8g2.drawXBM(4, 1, 11, 16, image_cross_contour_bits);
+
+      // boat icon
+      u8g2.drawXBM(39, -1, 17, 14, image_boat_icon_bits);
+
+      // label % controller
+      u8g2.drawStr(109, 13, "%");
+
+      // degree value
+      u8g2.setFont(u8g2_font_6x13_tr);
+      u8g2.drawStr(15, 40, "360");
+
+      // icoming data arrow
+      if(receiving_data){
+        u8g2.drawXBM(62, 8, 7, 5, image_icoming_data_arrow_bits);
       }
-      u8g2.setFont(u8g2_font_profont29_tr);
-      sprintf(buffer,"%d",*tof);
-      u8g2.drawStr(37, 46, buffer);
-      u8g2.drawXBM(2, 46, 19, 16, image_car_bits);
+
+      // controller battery level
+      u8g2.setFont(u8g2_font_6x10_tr);
+      u8g2.drawStr(91, 13, "100");
+
+      // degree icon
+      u8g2.drawEllipse(33, 31, 1, 1);
+
+      // horizontal bar
+      u8g2.drawLine(13, 43, 33, 43);
+
+      // label - mps
+      u8g2.setFont(u8g2_font_6x13_tr);
+      u8g2.drawStr(58, 38, "mps");
+
+      // gaz rect
+      u8g2.drawFrame(116, 24, 6, 33);
+
+      // label - drive mode
       u8g2.setFont(u8g2_font_5x8_tr);
-      u8g2.drawStr(20, 8, "TRIAMPH");
-      u8g2.drawXBM(25, 9, 26, 8, image_Battery_triamph_bits);
-      u8g2.drawXBM(105, 54, 11, 8, image_GameMode_bits);
-      u8g2.drawStr(77, 8, "CONTROL");
-      u8g2.drawXBM(80, 9, 26, 8, image_Battery_controller_bits);
+      u8g2.drawStr(117, 23, "P");
+
+      // label - collecting
+      u8g2.setFont(u8g2_font_4x6_tr);
+      u8g2.drawStr(47, 50, "collecting");
+
       u8g2.sendBuffer();
     }
     while(u8g2.nextPage());
-    vTaskDelay(pdMS_TO_TICKS(10));
+    //vTaskDelay(pdMS_TO_TICKS(10));
   }
 }
 void CreateTasksForScreen(){
   xTaskCreatePinnedToCore(
-    screen_refresh,"screen refresh"
+    vTaskScreenUpdate,"screen refresh"
     ,
      2048
     ,

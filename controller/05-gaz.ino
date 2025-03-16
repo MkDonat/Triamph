@@ -19,7 +19,6 @@ void monitoring_gaz_datas(void *arg){
         gaz.value
       );
     }
-    //Delay
     vTaskDelay(pdMS_TO_TICKS(10));
   }
 }
