@@ -9,6 +9,7 @@
 #define SYSTEM_BAUD_RATE 115200
 
 void setup(){
+  setCpuFrequencyMhz(80);
   //Starting communications
   Serial.begin(SYSTEM_BAUD_RATE);
   setup_broadcast();

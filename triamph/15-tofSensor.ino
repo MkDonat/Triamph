@@ -1,8 +1,8 @@
 #include <VL53L0X.h>
 #include "Wire.h"
 typedef struct{
-  const uint8_t sda_pin = 4;
-  const uint8_t scl_pin = 17;
+  const uint8_t sda_pin = 21;
+  const uint8_t scl_pin = 22;
   uint16_t *singleMillimetersValue = &SendingData.tofSensorData_singleMillimetersValue;
 }tofSensorDatas;
 tofSensorDatas tofSensorData;

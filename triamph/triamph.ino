@@ -11,20 +11,17 @@
 void setup() {
   //Starting communications
   Serial.begin(SYSTEM_BAUD_RATE);
-  //setup_now_sender();
-  //setup_now_receiver();
   setup_broadcast();
   setup_motors();
   //Creating FreeRTOS-Tasks
   CreateTasksForLedRed();
   //CreateTasksForStepper();
   CreateTasksForTofSensor();
-  //vTaskStartScheduler();
+  //System State Machine
+  setup_ssm();
 }
 void loop() {
-  //loop_now_sender();
-  //loop_now_receiver();
-  loop_broadcast();
-  loop_motors();
+  broadcast();
+  system_state_machine_execute();
   vTaskDelay(pdMS_TO_TICKS(10));
 } 

@@ -254,7 +254,7 @@ void setup_broadcast() {
   
 }
 
-void loop_broadcast() {
+void broadcast() {
   receiving_data = false;
   sending_data = false;
   // Broadcast the priority to find the master
