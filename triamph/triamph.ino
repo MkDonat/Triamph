@@ -9,14 +9,16 @@
 #define SYSTEM_BAUD_RATE 115200
 
 void setup() {
-  //Starting communications
+  //Cpu frequency
+  //setCpuFrequencyMhz(80);
+  //Serial Communications
   Serial.begin(SYSTEM_BAUD_RATE);
+  //Esp-Now setup
   setup_broadcast();
+  //motors
   setup_motors();
   //Creating FreeRTOS-Tasks
-  CreateTasksForLedRed();
-  //CreateTasksForStepper();
-  CreateTasksForTofSensor();
+   //--nothing yet
   //System State Machine
   setup_ssm();
 }
