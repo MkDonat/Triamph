@@ -9,6 +9,8 @@
 enum Modes_de_Conduite {BOAT,CAR,};
 
 void setup() {
+  //Motors
+  setup_motors();
   //Cpu frequency
   //setCpuFrequencyMhz(80);
   //Serial Communications

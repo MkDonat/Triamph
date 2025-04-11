@@ -1,24 +1,22 @@
 //Modes de fonctionnement des moteurs
-enum ModesMoteurs {
-  MODE_STANDBY,
-  MARCHE_AVANT,
-  MARCHE_ARRIERE,
-  ROTATION_HORAIRE,
-  ROTATION_ANTI_HORAIRE
+enum THRUST_CONTROL_MODES { //Modes de poussée
+  THRUST_IDLE,
+  THRUST_BACKWARD,
+  THRUST_FORWARD
 };
-ModesMoteurs Mode_Moteur_actuel = MODE_STANDBY;
-//Direction de déplacement
-typedef struct direction{
-  int8_t x = 0; 
-  int8_t y = 0;
-}direction;
-direction direction_triamph;
-//DRIVER Moteurs
+THRUST_CONTROL_MODES THRUST_CONTROL_MODE = THRUST_IDLE;
+enum YAW_CONTROL_MODES { //Modes de rotation
+  YAW_IDLE,
+  YAW_CLOCKWISE,
+  YAW_COUNTERCLOCKWISE
+};
+YAW_CONTROL_MODES YAW_CONTROL_MODE = YAW_IDLE;
+//Motor Driver
 byte IN1_pin = 27;
 byte IN2_pin = 26;
 byte IN3_pin = 25;
 byte IN4_pin = 33;
-//Moteurs
+//Motors
 const byte pin_moteur_gauche = 13;
 const byte pin_moteur_droit = 14;
 const byte cannal_moteurs = 0;
@@ -53,61 +51,48 @@ void setup_motors() {
     cannal_moteurs //int8_t channel
   );
 }
-void loop_motors(){
-  duty = receivedData.gaz_value;
-  //Serial.println(receivedData.gaz_value);
-  selection_du_mode();
-  maj_signaux_directionnels(); //Signaux envoyé sur le driver
-  drive_motors(); // Action à effectuer suivant le mode
-}
-void selection_du_mode(){// Sélection du mode suivant les commandes.
-  // Mise à jour de la direction
-  direction_triamph.y = receivedData.joystick_tor_y;
-  direction_triamph.x = receivedData.joystick_tor_x;
-  if(direction_triamph.y != 0){
-    switch(direction_triamph.y){
-      case 1:
-        Mode_Moteur_actuel = MARCHE_AVANT;
-      break;
-      case -1:
-        Mode_Moteur_actuel = MARCHE_ARRIERE;
-      break;
-    }
+void thrust_control_mode_select(){
+  if(receivedData.gaz_value>0){
+    THRUST_CONTROL_MODE = THRUST_FORWARD;
+  }else if(false){ //Condition à définir
+    THRUST_CONTROL_MODE = THRUST_BACKWARD;
   }
   else{
-    switch(direction_triamph.x){
-      case 1:
-        Mode_Moteur_actuel = ROTATION_HORAIRE;
-      break;
-      case -1:
-        Mode_Moteur_actuel = ROTATION_ANTI_HORAIRE;
-      break;
-      case 0:
-        Mode_Moteur_actuel = MODE_STANDBY;
-      break;
-    }
+    THRUST_CONTROL_MODE = THRUST_IDLE;
   }
+  driver_signal_update();
 }
-void maj_signaux_directionnels(){ // Envoie des signaux au driver pour régler le sens de rotation des moteurs
-  if(Mode_Moteur_actuel == MARCHE_AVANT){
+void yaw_control_mode_select(){
+  if(receivedData.joystick_tor_x==1){
+    YAW_CONTROL_MODE = YAW_CLOCKWISE;
+  }
+  else if(false){ //condition à définir
+    YAW_CONTROL_MODE = YAW_COUNTERCLOCKWISE;
+  }else{
+    YAW_CONTROL_MODE = YAW_IDLE;
+  }
+  driver_signal_update();
+}
+void driver_signal_update(){ //Modif du sens de rotation
+  if(THRUST_CONTROL_MODE == THRUST_FORWARD){
       digitalWrite(IN1_pin, 1);
       digitalWrite(IN2_pin, 0);
       digitalWrite(IN3_pin, 1);
       digitalWrite(IN4_pin, 0);
   }
-  else if(Mode_Moteur_actuel == MARCHE_ARRIERE){
+  else if(THRUST_CONTROL_MODE == THRUST_BACKWARD){
     digitalWrite(IN1_pin, 0);
     digitalWrite(IN2_pin, 1);
     digitalWrite(IN3_pin, 0);
     digitalWrite(IN4_pin, 1);
   }
-  else if(Mode_Moteur_actuel == ROTATION_HORAIRE){
+  else if(YAW_CONTROL_MODE == YAW_CLOCKWISE){
     digitalWrite(IN1_pin, 0);
     digitalWrite(IN2_pin, 1);
     digitalWrite(IN3_pin, 1);
     digitalWrite(IN4_pin, 0);
   }
-  else if(Mode_Moteur_actuel == ROTATION_ANTI_HORAIRE){
+  else if(YAW_CONTROL_MODE == YAW_COUNTERCLOCKWISE){
     digitalWrite(IN1_pin, 1);
     digitalWrite(IN2_pin, 0);
     digitalWrite(IN3_pin, 0);
@@ -121,57 +106,9 @@ void maj_signaux_directionnels(){ // Envoie des signaux au driver pour régler l
   }
 }
 void drive_motors(){
-  //Action à effectuer suivant le mode
-  switch (Mode_Moteur_actuel) {
-    case MODE_STANDBY:
-      mode_standby();
-      break;
-    case MARCHE_AVANT:
-      marche_avant();
-      break;
-    case MARCHE_ARRIERE:
-      marche_arriere();
-      break;
-    case ROTATION_HORAIRE:
-      rotation_horaire();
-      break;
-    case ROTATION_ANTI_HORAIRE:
-      rotation_anti_horaire();
-      break;
-  }                             
-}
-void mode_standby(){
-  ledcWriteChannel(
-    cannal_moteurs //uint8_t channel
-    , 
-    0 //uint32_t duty
-  );
-}
-void marche_avant(){
   ledcWriteChannel(
     cannal_moteurs //uint8_t channel
     , 
     duty //uint32_t duty
-  );
-}
-void marche_arriere(){
-  ledcWriteChannel(
-    cannal_moteurs //uint8_t channel
-    , 
-    duty //uint32_t duty
-  );
-}
-void rotation_horaire(){
-  ledcWriteChannel(
-    cannal_moteurs //uint8_t channel
-    , 
-    duty //uint32_t duty
-  );
-}
-void rotation_anti_horaire(){
-  ledcWriteChannel(
-    cannal_moteurs //uint8_t channel
-    , 
-    duty //uint32_t duty
-  );
+  );                   
 }
