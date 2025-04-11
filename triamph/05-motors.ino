@@ -1,4 +1,4 @@
-//Modes
+//Modes de fonctionnement des moteurs
 enum ModesMoteurs {
   MODE_STANDBY,
   MARCHE_AVANT,

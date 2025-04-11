@@ -1,12 +1,12 @@
-//CORES
+//System
+#define SYSTEM_BAUD_RATE 115200
 #define CORE_1 0
 #define CORE_2 1
-//COMMUNICATIONS
-//#include <esp_now.h>
-//#include <WiFi.h>
+//Communication (ESP-NOW protocole)
 #include "ESP32_NOW.h"
 #include "WiFi.h"
-#define SYSTEM_BAUD_RATE 115200
+//Mode de conduite du triamph
+enum Modes_de_Conduite {BOAT,CAR,};
 
 void setup() {
   //Cpu frequency
@@ -15,10 +15,6 @@ void setup() {
   Serial.begin(SYSTEM_BAUD_RATE);
   //Esp-Now setup
   setup_broadcast();
-  //motors
-  setup_motors();
-  //Creating FreeRTOS-Tasks
-   //--nothing yet
   //System State Machine
   setup_ssm();
 }
