@@ -1,3 +1,5 @@
+uint32_t* THRUST_FORCE = &receivedData.left_trigger_value;
+
 //Modes de fonctionnement des moteurs
 enum THRUST_CONTROL_MODES { //Modes de poussée
   THRUST_IDLE,
@@ -52,7 +54,7 @@ void setup_motors() {
   );
 }
 void thrust_control_mode_select(){
-  if(receivedData.gaz_value>0){
+  if(*THRUST_FORCE>0){
     THRUST_CONTROL_MODE = THRUST_FORWARD;
   }else if(false){ //Condition à définir
     THRUST_CONTROL_MODE = THRUST_BACKWARD;

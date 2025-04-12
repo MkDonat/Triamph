@@ -1,6 +1,6 @@
 typedef struct {
-  byte x_pin = 34; // input only + ADC_1 pin
-  byte y_pin = 39; // input only + ADC_1 pin (VN)
+  byte x_pin = 35; // input only + ADC_1 pin
+  byte y_pin = 33; // input only + ADC_1 pin (VN)
   int16_t x_raw_datas;
   int16_t y_raw_datas;
   int16_t x_fixed_datas;
@@ -62,7 +62,7 @@ void CreateTasksForJoystick(){
   xTaskCreatePinnedToCore(
     vTaskGetJoystickInputs,"Getting Joysticks inputs"
     ,
-     2048
+     1000
     ,
     NULL // Stack Depth
     ,

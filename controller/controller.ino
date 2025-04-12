@@ -4,23 +4,28 @@
 //COMMUNICATIONS
 #include "ESP32_NOW.h"
 #include "WiFi.h"
-#include <esp_mac.h>  // For the MAC2STR and MACSTR macros
-#include <vector>
+//#include <esp_mac.h>  // For the MAC2STR and MACSTR macros
+//#include <vector>
 #define SYSTEM_BAUD_RATE 115200
 
+//triggers
+byte left_trigger_pin = 39;
+byte right_trigger_pin = 34;
+
 void setup(){
-  setCpuFrequencyMhz(80);
-  //Starting communications
+  //triggers
+  pinMode(left_trigger_pin,INPUT);
+  pinMode(right_trigger_pin,INPUT);
+  //setCpuFrequencyMhz(80);
+  //communications
   Serial.begin(SYSTEM_BAUD_RATE);
   setup_broadcast();
-  //Creating FreeRTOS-Tasks
-  CreateTaskForPID();
-  //CreateTasksForJoystick();
-  CreateTasksForGaz();
-  CreateTasksForScreen();
+  //Controller state machine
+  setup_csm();
 }
 
 void loop(){
-  loop_broadcast();
-  //vTaskDelay(pdMS_TO_TICKS(10));
+  broadcast();
+  csm_execute();
+  vTaskDelay(pdMS_TO_TICKS(10));
 }
