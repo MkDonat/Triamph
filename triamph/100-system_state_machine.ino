@@ -11,11 +11,13 @@ StateMachine ssm; // ssm -> system state machine
 bool transistion(){
   return false;
 };
+
 bool transition_5(){
   if (strcmp(receivedData.B_button_Event, "click") == 0){
     return true;
   }else return false;
 }
+
 long startingTime = 2000; // Délai d’attente dans l’état de démarrage
 
 void setup_ssm(){
@@ -94,6 +96,7 @@ void setup_ssm(){
 
   /*T1**/SETTING->addTransition(IDLE,false);
   /*T2**/IDLE->addTransition(SETTING,false);
+
 
   /*T3**/IDLE->addTransition(COLLECTING,false);
   /*T4**/COLLECTING->addTransition(IDLE,false);
