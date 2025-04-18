@@ -25,6 +25,7 @@ void onRun_LU(){
 
 }
 void onExit_LU(){
+
   is_button_clicked_LU = false;
   if (xTask_LU_Handle != NULL) {
     vTaskDelete(xTask_LU_Handle);

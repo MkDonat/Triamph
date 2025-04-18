@@ -24,5 +24,4 @@ void onRun_OC_CLAMPS(){
 void onExit_OC_CLAMPS(){
   is_button_clicked_OC_CLAMPS = false;
   vTaskDelete(xTask_OC_CLAMPS_Handle);
-  
 }

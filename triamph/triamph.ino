@@ -5,6 +5,7 @@
 //Communication (ESP-NOW protocole)
 #include "ESP32_NOW.h"
 #include "WiFi.h"
+
 #include "ESP32Servo.h"
 #include "OneButton.h"
 //Mode de conduite du triamph
@@ -23,6 +24,7 @@ Servo servo_OC_CLAMPS_gauche;
 //OneButton_OC_CLAMPS;
 //byte LU_button_pin = 13;
 //byte OC_CLAMPS_button_pin = 27;
+
 
 void setup() {
   //Motors
@@ -52,8 +54,6 @@ void setup() {
 }
 void loop() {
   broadcast();
-  //button_LU.tick();
-  //button_OC_CLAMPS.tick();
   system_state_machine_execute();
   vTaskDelay(pdMS_TO_TICKS(10));
 } 

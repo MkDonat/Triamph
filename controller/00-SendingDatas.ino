@@ -7,6 +7,6 @@ typedef struct { //250 Bytes MAX
   // joystick
   int8_t joystick_tor_x = 0;
   int8_t joystick_tor_y = 0;
-} ReceivedPacketData;
+} SendingPacketData;
 
-ReceivedPacketData receivedData;
+SendingPacketData SendingData;
