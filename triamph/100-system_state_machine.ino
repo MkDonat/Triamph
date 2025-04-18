@@ -11,6 +11,11 @@ StateMachine ssm; // ssm -> system state machine
 bool transistion(){
   return false;
 };
+bool transition_5(){
+  if (strcmp(receivedData.B_button_Event, "click") == 0){
+    return true;
+  }else return false;
+}
 long startingTime = 2000; // Délai d’attente dans l’état de démarrage
 
 void setup_ssm(){
@@ -77,7 +82,7 @@ void setup_ssm(){
   );
 
   State* THRUST_CONTROL = ssm.addState(
-    "POUSSÉE",
+    "POUSSÉE/GAZ",
     onEnter_THRUST_CONTROL,
     onExit_THRUST_CONTROL,
     onRun_THRUST_CONTROL
@@ -87,13 +92,13 @@ void setup_ssm(){
 
   /*T0**/STARTING->addTransition(IDLE,startingTime);
 
-  /*T1**/SETTING->addTransition(IDLE,false);//Click B
-  /*T2**/IDLE->addTransition(SETTING,false);//Click PAD
+  /*T1**/SETTING->addTransition(IDLE,false);
+  /*T2**/IDLE->addTransition(SETTING,false);
 
   /*T3**/IDLE->addTransition(COLLECTING,false);
   /*T4**/COLLECTING->addTransition(IDLE,false);
 
-  /*T5**/IDLE->addTransition(LU,false);
+  /*T5**/IDLE->addTransition(LU,transition_5);
   /*T6**/LU->addTransition(IDLE,false);
 
   /*T7**/IDLE->addTransition(BACK2HOME,false);
@@ -105,7 +110,7 @@ void setup_ssm(){
   /*T11*/IDLE->addTransition(YAW_CONTROL,false);
   /*T12*/YAW_CONTROL->addTransition(IDLE,false);
 
-  /*T12*/IDLE->addTransition(OC_CLAMPS,false); //OC -> OPEN/CLOSE CLAMPS
+  /*T13*/IDLE->addTransition(OC_CLAMPS,false); //OC -> OPEN/CLOSE CLAMPS
   /*T14*/OC_CLAMPS->addTransition(IDLE,false);
 
   //ssm -> init

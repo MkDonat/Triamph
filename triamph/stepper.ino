@@ -1,4 +1,4 @@
-#include <Stepper.h>
+/*#include <Stepper.h>
 
 const int stepsPerRevolution = 1000;  // change this to fit the number of steps per revolution for your motor
 const uint32_t rotation_delay = 1000;
@@ -37,4 +37,4 @@ void CreateTasksForStepper(){
     ,
     CORE_2 // Core on which the task will run
   );
-}
+}*/
