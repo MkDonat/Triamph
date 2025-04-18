@@ -1,3 +1,0 @@
-void onExit_STARTING(){
-  
-}
