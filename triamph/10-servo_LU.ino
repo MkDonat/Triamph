@@ -1,5 +1,8 @@
-uint16_t LU_Loaded = 70;
+int currentPose_LU;
+uint16_t targetPose_LU;
+uint16_t LU_Loaded = 70; //angles
 uint16_t LU_Unloaded = 110;
+
 
 TaskHandle_t xTask_LU_Handle = NULL;
 
@@ -22,5 +25,12 @@ void vTask_Loading_or_Unloading_Trash(void* position_LU){
     if (currentPose_LU == *targetPose_LU) {
       vTaskDelay(pdMS_TO_TICKS(200));
     }
+  }
+}
+bool is_LU_task_complete(){
+  if(currentPose_LU >= (targetPose_LU - servo_error) && currentPose_LU <= (targetPose_LU + servo_error) ){
+    return true;
+  }else{
+    return false;
   }
 }

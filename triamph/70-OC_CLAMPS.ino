@@ -2,11 +2,11 @@ void onEnter_OC_CLAMPS(){
   int currentPose_OC_CLAMPS = servo_OC_CLAMPS_droit.read();
   static uint16_t targetPose_OC_CLAMPS;
 
-  if (currentPose_OC_CLAMPS == OC_CLAMPS_Closed){
+  if (currentPose_OC_CLAMPS <= OC_CLAMPS_Closed){
     Serial.println("Ouverture des Pinces");
     targetPose_OC_CLAMPS = OC_CLAMPS_Opened;
   }
-  if (currentPose_OC_CLAMPS == OC_CLAMPS_Opened){
+  if (currentPose_OC_CLAMPS >= OC_CLAMPS_Opened){
     Serial.println("Fermeture des Pinces");
     targetPose_OC_CLAMPS = OC_CLAMPS_Closed;
   }

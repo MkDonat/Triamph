@@ -102,7 +102,7 @@ void setup_ssm(){
   /*T4**/COLLECTING->addTransition(IDLE,false);
 
   /*T5**/IDLE->addTransition(LU,transition_5);
-  /*T6**/LU->addTransition(IDLE,false);
+  /*T6**/LU->addTransition(IDLE,is_LU_task_complete());
 
   /*T7**/IDLE->addTransition(BACK2HOME,false);
   /*T8**/BACK2HOME->addTransition(IDLE,false);

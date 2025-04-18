@@ -1,4 +1,4 @@
-void onEnter_NORMAL(){
+/*void onEnter_NORMAL(){
   if(xTask_handling_left_trigger_Handle == NULL){
     xTaskCreatePinnedToCore(
       vTask_handling_left_trigger
@@ -36,7 +36,7 @@ void onEnter_NORMAL(){
   
 }
 void onRun_NORMAL(){
-  
+  Serial.println("OK");
 }
 void onExit_NORMAL(){
   

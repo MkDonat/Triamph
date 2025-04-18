@@ -37,12 +37,13 @@ void setup(){
     //CreateTasksForJoystick();
   setup_broadcast();
   //Controller state machine
-  setup_csm();
+  //setup_csm();
 }
 
 void loop(){
   broadcast();
-  csm_execute();
+  //csm_execute();
   B_button.tick();
+  Serial.println("OK");
   vTaskDelay(pdMS_TO_TICKS(10));
 }

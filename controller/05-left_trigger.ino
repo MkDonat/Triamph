@@ -1,4 +1,4 @@
-TaskHandle_t xTask_handling_left_trigger_Handle = NULL;
+/*TaskHandle_t xTask_handling_left_trigger_Handle = NULL;
 uint32_t* left_trigger_value = &SendingData.left_trigger_value;
 
 void vTask_handling_left_trigger(void *arg){

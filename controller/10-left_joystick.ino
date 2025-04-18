@@ -1,4 +1,4 @@
-typedef struct {
+/*typedef struct {
   byte x_pin = 32; // input only + ADC_1 pin
   byte y_pin = 35; // input only + ADC_1 pin (VN)
   int16_t x_raw_datas;
@@ -79,3 +79,4 @@ void CreateTasksForJoystick(){
     CORE_2 // Core on which the task will run
   );
 }
+*/
