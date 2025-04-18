@@ -11,14 +11,23 @@
 //triggers
 byte left_trigger_pin = 39;
 byte right_trigger_pin = 34;
+//left joystick
+byte left_joystick_pin_x = 32;
+byte left_joystick_pin_y = 35;
 
 void setup(){
+  setCpuFrequencyMhz(80);
+  //communications
+  Serial.begin(SYSTEM_BAUD_RATE);
   //triggers
   pinMode(left_trigger_pin,INPUT);
   pinMode(right_trigger_pin,INPUT);
-  //setCpuFrequencyMhz(80);
-  //communications
-  Serial.begin(SYSTEM_BAUD_RATE);
+  //left joystick
+  pinMode(left_joystick_pin_x,INPUT);
+  pinMode(left_joystick_pin_y,INPUT);
+  //FREERTOS TASKS
+  CreateTasksForJoystick();
+
   setup_broadcast();
   //Controller state machine
   setup_csm();

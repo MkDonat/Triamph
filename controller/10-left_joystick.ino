@@ -1,6 +1,6 @@
 typedef struct {
-  byte x_pin = 35; // input only + ADC_1 pin
-  byte y_pin = 33; // input only + ADC_1 pin (VN)
+  byte x_pin = 32; // input only + ADC_1 pin
+  byte y_pin = 35; // input only + ADC_1 pin (VN)
   int16_t x_raw_datas;
   int16_t y_raw_datas;
   int16_t x_fixed_datas;
@@ -12,16 +12,22 @@ typedef struct {
   const int16_t max_analog_lecture = 4095; // 12-bits
   int16_t x_offset = -238; // décallage du au vieillissement
   int16_t y_offset = -138; // décallage du au vieillissement
-  bool printOnSerial = false;
+  bool printOnSerial = true;
 } JoystickDatas;
 JoystickDatas joystick;
 
 void vTaskGetJoystickInputs(void *arg){
-  pinMode(joystick.x_pin, INPUT);
-  pinMode(joystick.y_pin, INPUT);
+
   for(;;){
+
+    analogRead(joystick.x_pin);
+    vTaskDelay(pdMS_TO_TICKS(10));
     joystick.x_raw_datas = analogRead(joystick.x_pin);
+    vTaskDelay(pdMS_TO_TICKS(10));
+    analogRead(joystick.y_pin);
+    vTaskDelay(pdMS_TO_TICKS(10));
     joystick.y_raw_datas = analogRead(joystick.y_pin);
+
     joystick.x_fixed_datas = joystick.x_raw_datas - joystick.x_offset;
     joystick.y_fixed_datas = joystick.y_raw_datas - joystick.y_offset;
     if(joystick.x_fixed_datas > joystick.max_analog_lecture/2 + joystick.x_err){
@@ -45,7 +51,7 @@ void vTaskGetJoystickInputs(void *arg){
     //print to serial
     if(joystick.printOnSerial){
       Serial.printf(
-        "raw_x: %ld , x: %ld , raw_y: %ld , y: %ld , tor -> x:%ld , y:%ld\n"
+        "raw_x: %d , x: %d , raw_y: %d , y: %d , tor -> x:%d , y:%d\n"
         ,joystick.x_raw_datas
         ,joystick.x_fixed_datas
         ,joystick.y_raw_datas
@@ -62,7 +68,7 @@ void CreateTasksForJoystick(){
   xTaskCreatePinnedToCore(
     vTaskGetJoystickInputs,"Getting Joysticks inputs"
     ,
-     1000
+     2048
     ,
     NULL // Stack Depth
     ,
