@@ -1,27 +1,32 @@
 void onEnter_OC_CLAMPS(){
-  int currentPose_OC_CLAMPS = servo_OC_CLAMPS_droit.read();
-  static uint16_t targetPose_OC_CLAMPS;
-
-  if (currentPose_OC_CLAMPS <= OC_CLAMPS_Closed){
-    Serial.println("Ouverture des Pinces");
-    targetPose_OC_CLAMPS = OC_CLAMPS_Opened;
-  }
-  if (currentPose_OC_CLAMPS >= OC_CLAMPS_Opened){
-    Serial.println("Fermeture des Pinces");
-    targetPose_OC_CLAMPS = OC_CLAMPS_Closed;
-  }
-  xTaskCreatePinnedToCore(
-    vTask_Opening_or_Closing_Clamps, "Ouverture ou Fermeture", 1000,
-    (void*) &targetPose_OC_CLAMPS,
-    1,
-    &xTask_OC_CLAMPS_Handle,
-    CORE_2
+  Serial.println("Entring OC_CLAMPS STATE");
+  one_shot_timer_start(
+    "Timer open/close clamps",//Description 
+    pdMS_TO_TICKS(7000),//Ticks To Wait 
+    &xTask_OC_TimerHandler,//Handler
+    xTask_OC_TimerCallback //Callback
   );
+  if(xTask_OC_Clamps_Handle == NULL){
+    xTaskCreatePinnedToCore(
+      vTask_OC_clamps,
+      "Ouverture/Fermeture des pinces",  //description
+      2048, //stack in words (not bytes)
+      NULL, //args
+      1, // priority
+      &xTask_OC_Clamps_Handle,
+      CORE_2
+    );
+  }
 }
 void onRun_OC_CLAMPS(){
 
 }
 void onExit_OC_CLAMPS(){
-  is_button_clicked_OC_CLAMPS = false;
-  vTaskDelete(xTask_OC_CLAMPS_Handle);
+  xTimerStop(xTask_OC_TimerHandler,5);
+  Serial.println("Exiting OC_CLAMPS STATE");
+  is_OC_Clamps_task_complete = false;
+  if(xTask_OC_Clamps_Handle != NULL){
+    vTaskDelete(xTask_OC_Clamps_Handle);
+    xTask_OC_Clamps_Handle = NULL;
+  }
 }

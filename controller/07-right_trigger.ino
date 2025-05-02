@@ -8,4 +8,4 @@ void vTask_handling_right_trigger(void *arg){
     *right_trigger_value = analogRead(right_trigger_pin);
     vTaskDelay(pdMS_TO_TICKS(10));
   }
-}
+}*/

@@ -4,21 +4,42 @@
 #include <State.h>
 #include <Transition.h>
 
+long startingTime = 2000; // Délai d’attente dans l’état de démarrage
+
 // New finite state  machine
 StateMachine ssm; // ssm -> system state machine
 
 // Transitions implementation
-bool transistion(){
-  return false;
-};
-
 bool transition_5(){
-  if (strcmp(receivedData.B_button_Event, "click") == 0){
+  return false;
+}
+bool transition_6(){
+  return false;
+}
+bool transition_9(){
+  if( *dir_y == 1 || *dir_y == -1 ){
+    return true;
+  }else{
+    return false;
+  } 
+}
+bool transition_10(){
+  if( *dir_y == 1 || *dir_y == -1 ){
+    return false;
+  }else{
+    return true;
+  } 
+}
+bool transition_13(){
+  if (strcmp(receivedData.button_msg, "B_long_press") == 0){
     return true;
   }else return false;
+  //return false;
 }
-
-long startingTime = 2000; // Délai d’attente dans l’état de démarrage
+bool transition_14(){
+  return is_OC_Clamps_task_complete;
+  //return false;
+}
 
 void setup_ssm(){
   //fsm -> adding new states
@@ -102,19 +123,19 @@ void setup_ssm(){
   /*T4**/COLLECTING->addTransition(IDLE,false);
 
   /*T5**/IDLE->addTransition(LU,transition_5);
-  /*T6**/LU->addTransition(IDLE,is_LU_task_complete());
+  /*T6**/LU->addTransition(IDLE,transition_6);
 
   /*T7**/IDLE->addTransition(BACK2HOME,false);
   /*T8**/BACK2HOME->addTransition(IDLE,false);
 
-  /*T9**/IDLE->addTransition(THRUST_CONTROL,false);
-  /*T10*/THRUST_CONTROL->addTransition(IDLE,false);
+  /*T9**/IDLE->addTransition(THRUST_CONTROL,transition_9);
+  /*T10*/THRUST_CONTROL->addTransition(IDLE,transition_10);
 
   /*T11*/IDLE->addTransition(YAW_CONTROL,false);
   /*T12*/YAW_CONTROL->addTransition(IDLE,false);
 
-  /*T13*/IDLE->addTransition(OC_CLAMPS,false); //OC -> OPEN/CLOSE CLAMPS
-  /*T14*/OC_CLAMPS->addTransition(IDLE,false);
+  /*T13*/IDLE->addTransition(OC_CLAMPS,transition_13); //OC -> OPEN/CLOSE CLAMPS
+  /*T14*/OC_CLAMPS->addTransition(IDLE,transition_14);
 
   //ssm -> init
   ssm.setInitialState(STARTING);

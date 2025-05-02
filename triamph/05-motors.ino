@@ -1,5 +1,6 @@
-uint32_t* THRUST_FORCE = &receivedData.left_trigger_value;
-
+int16_t* THRUST_FORCE = &receivedData.L_J_analog_y;
+int8_t* dir_x = &receivedData.L_J_tor_x;
+int8_t* dir_y = &receivedData.L_J_tor_y;
 //Modes de fonctionnement des moteurs
 enum THRUST_CONTROL_MODES { //Modes de poussée
   THRUST_IDLE,
@@ -19,12 +20,12 @@ byte IN2_pin = 26;
 byte IN3_pin = 25;
 byte IN4_pin = 33;
 //Motors
-const byte pin_moteur_gauche = 13;
-const byte pin_moteur_droit = 14;
-const byte cannal_moteurs = 0;
-const byte resolution = 12;
+const uint8_t pin_moteur_gauche = 13;
+const uint8_t pin_moteur_droit = 14;
+const uint8_t cannal_moteurs = 0;
+const uint8_t resolution = 12;
 uint32_t freq = 500;
-uint32_t duty = 0; //Rapport Cyclique courrant
+uint16_t duty = 0; //Rapport Cyclique courrant
 
 void setup_motors() {
   //Driver
@@ -54,9 +55,9 @@ void setup_motors() {
   );
 }
 void thrust_control_mode_select(){
-  if(*THRUST_FORCE>0){
+  if( *dir_y == 1 ){
     THRUST_CONTROL_MODE = THRUST_FORWARD;
-  }else if(false){ //Condition à définir
+  }else if(*dir_y == -1){ //Condition à définir
     THRUST_CONTROL_MODE = THRUST_BACKWARD;
   }
   else{
@@ -65,10 +66,10 @@ void thrust_control_mode_select(){
   driver_signal_update();
 }
 void yaw_control_mode_select(){
-  if(receivedData.joystick_tor_x==1){
+  if( *dir_x == 1 ){
     YAW_CONTROL_MODE = YAW_CLOCKWISE;
   }
-  else if(false){ //condition à définir
+  else if( *dir_x == -1 ){
     YAW_CONTROL_MODE = YAW_COUNTERCLOCKWISE;
   }else{
     YAW_CONTROL_MODE = YAW_IDLE;
@@ -113,4 +114,13 @@ void drive_motors(){
     , 
     duty //uint32_t duty
   );                   
+}
+void stop_motors(){
+  THRUST_CONTROL_MODE = THRUST_IDLE;
+  ledcWriteChannel(
+    cannal_moteurs //uint8_t channel
+    , 
+    0 //uint32_t duty
+  );
+  driver_signal_update();                   
 }

@@ -1,5 +1,5 @@
-/*void onEnter_NORMAL(){
-  if(xTask_handling_left_trigger_Handle == NULL){
+void onEnter_NORMAL(){
+  /*if(xTask_handling_left_trigger_Handle == NULL){
     xTaskCreatePinnedToCore(
       vTask_handling_left_trigger
       ,
@@ -32,11 +32,11 @@
       ,
       CORE_2 // Core on which the task will run
     );
-  }
-  
+  }*/
+  CreateTasksForLeftJoystick();
 }
 void onRun_NORMAL(){
-  Serial.println("OK");
+ //Serial.println(SendingData.button_msg);
 }
 void onExit_NORMAL(){
   
