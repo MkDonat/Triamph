@@ -1,25 +1,3 @@
-/*//screen libs
-#include <U8g2lib.h>
-#ifdef U8X8_HAVE_HW_SPI
-#include <SPI.h>
-#endif
-#ifdef U8X8_HAVE_HW_I2C
-#include <Wire.h>
-#endif
-//SPI setup pins
-U8G2_SSD1309_128X64_NONAME2_1_4W_SW_SPI u8g2(
-  U8G2_R0
-  ,  
-  18 // SLAVE CLOCK (SCK) or (SCL)
-  ,
-  23 // SLAVE DATA (SDA)
-  ,
-  5 // CHEAP SELECT (CS)
-  ,  
-  2 // REGISTER SELECT (DC)
-  ,
-  4 // RESET (RES)
-);
 //Lopaka variables
 static const unsigned char image_controller_icon_bits[] = {0x20,0x00,0xfe,0x03,0xfb,0x07,0x71,0x05,0xfb,0x07,0x8f,0x07,0x07,0x07,0x03,0x06};
 static const unsigned char image_sending_data_arrow_bits[] = {0x04,0x02,0x7f,0x02,0x04};
@@ -42,7 +20,7 @@ void vTaskScreenUpdate(void *arg){
       sprintf(
         buffer,
         "%d",
-        receivedData.tofSensorData_singleMillimetersValue
+        0      
       );
       u8g2.setFont(u8g2_font_6x13_tr);
       u8g2.drawStr(60, 30, buffer);
@@ -120,7 +98,7 @@ void CreateTasksForScreen(){
     ,
      2048
     ,
-    NULL // Stack Depth
+    NULL
     ,
     1 //Priority
     ,
@@ -128,4 +106,4 @@ void CreateTasksForScreen(){
     ,
     CORE_2 // Core on which the task will run
   );
-}*/
+}

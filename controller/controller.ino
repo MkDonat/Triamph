@@ -7,7 +7,29 @@
 //#include <vector>
 #include <OneButton.h>
 #define SYSTEM_BAUD_RATE 115200
+//screen libs
+#include <U8g2lib.h>
+#ifdef U8X8_HAVE_HW_SPI
+#include <SPI.h>
+#endif
+#ifdef U8X8_HAVE_HW_I2C
+#include <Wire.h>
+#endif
 
+//SPI setup pins (SCREEN)
+U8G2_SSD1309_128X64_NONAME2_1_4W_SW_SPI u8g2(
+  U8G2_R0
+  ,  
+  23 // SLAVE CLOCK (SCK) or (SCL)
+  ,
+  18 // SLAVE DATA (SDA)
+  ,
+  5 // CHEAP SELECT (CS)
+  ,  
+  2 // REGISTER SELECT (DC)
+  ,
+  4 // RESET (RES)
+);
 //triggers
 uint8_t left_trigger_pin = 33;
 uint8_t right_trigger_pin = 32;
@@ -45,7 +67,6 @@ OneButton DOWN_button;
 OneButton SHARE_button;
 //PCF8574 OBJ
 Adafruit_PCF8574 pcf;
-uint8_t pcf_adrr = 38; //0x
 
 void setup(){
   //setCpuFrequencyMhz(80);
@@ -58,7 +79,8 @@ void setup(){
   pinMode(left_joystick_pin_x,INPUT);
   pinMode(left_joystick_pin_y,INPUT);
   //Configuring PCF8574 button mode
-  if (!pcf.begin(0x38, &Wire)) {
+  //if (!pcf.begin(0x39, &Wire)) {
+  if (false) {
     Serial.println("Couldn't find PCF8574");
     while (1);
   }
@@ -66,7 +88,7 @@ void setup(){
     pcf.pinMode(p, INPUT_PULLUP);
   }
   //Button pin assign
-  B_button_pin = 25;
+  B_button_pin = 36;//25;
   A_button_pin = pcf_P0;
   X_button_pin = pcf_P1;
   Y_button_pin = pcf_P2;

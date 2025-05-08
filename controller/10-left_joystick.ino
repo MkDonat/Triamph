@@ -7,12 +7,12 @@ typedef struct {
   int16_t *y_fixed_datas = &SendingData.L_J_analog_y;
   int8_t  *tor_x = &SendingData.L_J_tor_x;
   int8_t  *tor_y = &SendingData.L_J_tor_y;
-  const int16_t x_err = 300;
-  const int16_t y_err = 300;
+  const int16_t x_err = 230;
+  const int16_t y_err = 230;
   const int16_t max_analog_lecture = 4095; // 12-bits
   int16_t x_offset = -224; // décallage du au vieillissement
   int16_t y_offset = -127; // décallage du au vieillissement
-  bool printOnSerial = true;
+  bool printOnSerial = false;
 } LeftJoystickDatas;
 LeftJoystickDatas L_J;
 

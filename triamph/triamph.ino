@@ -8,8 +8,6 @@
 //Servo motors
 #include "ESP32Servo.h"
 
-//Mode de conduite du triamph
-enum Modes_de_Conduite {BOAT,CAR};
 //Servos
 Servo sg90_droit;
 Servo sg90_gauche;
@@ -21,6 +19,9 @@ uint16_t servo_error = 5; //degrés
 //System bool
 bool is_OC_Clamps_task_complete = false;
 bool is_on_water = false;
+
+void setup_ssm();
+void system_state_machine_execute();
 
 void setup() {
   //Cpu frequency
