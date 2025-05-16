@@ -12,32 +12,36 @@
 Servo sg90_droit;
 Servo sg90_gauche;
 uint8_t sg90_defaut_pose = 1;
-Servo ds3218_droit;
-Servo ds3218_gauche;
+//Servo ds3218_droit;
+//Servo ds3218_gauche;
 uint8_t ds3218_defaut_pose = 179;
 uint16_t servo_error = 5; //degrés
 //System bool
 bool is_OC_Clamps_task_complete = false;
 bool is_on_water = false;
-
+//Définition des Fonctions
 void setup_ssm();
 void system_state_machine_execute();
 
 void setup() {
+  //Moniteur d’exception Expressif
+  esp_log_level_set("*", ESP_LOG_VERBOSE);
   //Cpu frequency
     //setCpuFrequencyMhz(80);
   //Serial Communications
   Serial.begin(SYSTEM_BAUD_RATE);
   //Motors
   setup_motors();
+  //Verin
+  setup_verin();
   //Servos-attach
-  ds3218_droit.attach(15);
-  ds3218_gauche.attach(2);
-  sg90_droit.attach(16);
+  //ds3218_droit.attach(15);
+  //ds3218_gauche.attach(2);
+  sg90_droit.attach(18);
   sg90_gauche.attach(22);
   //Servos-set defaut poses
-  ds3218_droit.write(ds3218_defaut_pose);
-  ds3218_gauche.write(ds3218_defaut_pose);
+  //ds3218_droit.write(ds3218_defaut_pose);
+  //ds3218_gauche.write(ds3218_defaut_pose);
   sg90_droit.write(sg90_defaut_pose);
   sg90_gauche.write(sg90_defaut_pose);
   //System State Machine

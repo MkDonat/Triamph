@@ -10,10 +10,30 @@ long startingTime = 2000; // Délai d’attente dans l’état de démarrage
 StateMachine ssm; // ssm -> system state machine
 
 // Transitions implementation
+bool transition_1(){
+  return false;
+}
+bool transition_2(){
+  return false;
+}
+bool transition_3(){
+  if (strcmp(receivedData.button_msg, "Y_long_press") == 0){
+    return true;
+  }else return false;
+}
+bool transition_4(){
+  return Collecting_task_completed;
+}
 bool transition_5(){
   return false;
 }
 bool transition_6(){
+  return false;
+}
+bool transition_7(){
+  return false;
+}
+bool transition_8(){
   return false;
 }
 bool transition_9(){
@@ -28,10 +48,16 @@ bool transition_10(){
     return false;
   }else{
     return true;
-  } 
+  }
+}
+bool transition_11(){
+  return false;
+}
+bool transition_12(){
+  return false;
 }
 bool transition_13(){
-  if (strcmp(receivedData.button_msg, "B_long_press") == 0){
+  if (strcmp(receivedData.button_msg, "A_long_press") == 0){
     return true;
   }else return false;
   //return false;
@@ -115,24 +141,24 @@ void setup_ssm(){
 
   /*T0**/STARTING->addTransition(IDLE,startingTime);
 
-  /*T1**/SETTING->addTransition(IDLE,false);
-  /*T2**/IDLE->addTransition(SETTING,false);
+  /*T1**/SETTING->addTransition(IDLE,transition_1);
+  /*T2**/IDLE->addTransition(SETTING,transition_2);
 
 
-  /*T3**/IDLE->addTransition(COLLECTING,false);
-  /*T4**/COLLECTING->addTransition(IDLE,false);
+  /*T3**/IDLE->addTransition(COLLECTING,transition_3);
+  /*T4**/COLLECTING->addTransition(IDLE,transition_4);
 
   /*T5**/IDLE->addTransition(LU,transition_5);
   /*T6**/LU->addTransition(IDLE,transition_6);
 
-  /*T7**/IDLE->addTransition(BACK2HOME,false);
-  /*T8**/BACK2HOME->addTransition(IDLE,false);
+  /*T7**/IDLE->addTransition(BACK2HOME,transition_7);
+  /*T8**/BACK2HOME->addTransition(IDLE,transition_8);
 
   /*T9**/IDLE->addTransition(THRUST_CONTROL,transition_9);
   /*T10*/THRUST_CONTROL->addTransition(IDLE,transition_10);
 
-  /*T11*/IDLE->addTransition(YAW_CONTROL,false);
-  /*T12*/YAW_CONTROL->addTransition(IDLE,false);
+  /*T11*/IDLE->addTransition(YAW_CONTROL,transition_11);
+  /*T12*/YAW_CONTROL->addTransition(IDLE,transition_12);
 
   /*T13*/IDLE->addTransition(OC_CLAMPS,transition_13); //OC -> OPEN/CLOSE CLAMPS
   /*T14*/OC_CLAMPS->addTransition(IDLE,transition_14);

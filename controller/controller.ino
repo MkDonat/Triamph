@@ -79,8 +79,7 @@ void setup(){
   pinMode(left_joystick_pin_x,INPUT);
   pinMode(left_joystick_pin_y,INPUT);
   //Configuring PCF8574 button mode
-  //if (!pcf.begin(0x39, &Wire)) {
-  if (false) {
+  if (!pcf.begin(0x38, &Wire)) {
     Serial.println("Couldn't find PCF8574");
     while (1);
   }
@@ -88,7 +87,7 @@ void setup(){
     pcf.pinMode(p, INPUT_PULLUP);
   }
   //Button pin assign
-  B_button_pin = 36;//25;
+  B_button_pin = 25;
   A_button_pin = pcf_P0;
   X_button_pin = pcf_P1;
   Y_button_pin = pcf_P2;
