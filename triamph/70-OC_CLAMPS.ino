@@ -33,15 +33,15 @@ void onRun_OC_CLAMPS(){
 
 }
 void onExit_OC_CLAMPS(){
+  //stop and delete timer
   if (xTask_OC_TimerHandler != NULL) {
     if (xTimerStop(xTask_OC_TimerHandler, pdMS_TO_TICKS(100)) != pdPASS) {
-      Serial.println("xTimerStop a échoué ou timer déjà arrêté.");
+      Serial.println("OC_CLAMPS: xTimerStop a échoué ou timer déjà arrêté.");
     }
     xTimerDelete(xTask_OC_TimerHandler, pdMS_TO_TICKS(100));
     xTask_OC_TimerHandler = NULL;
   }
-  Serial.println("Exiting OC_CLAMPS STATE");
-  is_OC_Clamps_task_complete = false;
+  //Deleting tasks
   if(xTask_OC_right_Clamp_Handle != NULL){
     vTaskDelete(xTask_OC_right_Clamp_Handle);
     xTask_OC_right_Clamp_Handle = NULL;
@@ -50,4 +50,7 @@ void onExit_OC_CLAMPS(){
     vTaskDelete(xTask_OC_left_Clamp_Handle);
     xTask_OC_left_Clamp_Handle = NULL;
   }
+  //updating vars
+  is_OC_Clamps_task_complete = false;
+  Serial.println("Exiting OC_CLAMPS STATE");
 }

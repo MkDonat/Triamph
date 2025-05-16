@@ -37,7 +37,7 @@ void setup() {
   //Servos-attach
   //ds3218_droit.attach(15);
   //ds3218_gauche.attach(2);
-  sg90_droit.attach(18);
+  sg90_droit.attach(16);
   sg90_gauche.attach(22);
   //Servos-set defaut poses
   //ds3218_droit.write(ds3218_defaut_pose);
