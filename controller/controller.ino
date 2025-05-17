@@ -73,21 +73,13 @@ void setup(){
   //communications
   Serial.begin(SYSTEM_BAUD_RATE);
   //triggers
-  //pinMode(left_trigger_pin,INPUT);
-  //pinMode(right_trigger_pin,INPUT);
+  pinMode(left_trigger_pin,INPUT);
+  pinMode(right_trigger_pin,INPUT);
   //left joystick
   pinMode(left_joystick_pin_x,INPUT);
   pinMode(left_joystick_pin_y,INPUT);
-  //Configuring PCF8574 button mode
-  if (!pcf.begin(0x38, &Wire)) {
-    Serial.println("Couldn't find PCF8574");
-    while (1);
-  }
-  for (uint8_t p=0; p<8; p++) {
-    pcf.pinMode(p, INPUT_PULLUP);
-  }
   //Button pin assign
-  B_button_pin = 25;
+  B_button_pin = 19;
   A_button_pin = pcf_P0;
   X_button_pin = pcf_P1;
   Y_button_pin = pcf_P2;
@@ -96,6 +88,16 @@ void setup(){
   UP_button_pin = pcf_P5;
   DOWN_button_pin = pcf_P6;
   SHARE_button_pin = pcf_P7;
+  //Configuring PCF8574 button mode
+  if (!pcf.begin(0x38, &Wire)) { //0x20
+    Serial.println("Couldn't find PCF8574");
+    while (1);
+  }
+  for (uint8_t p=0; p<8; p++) {
+    pcf.pinMode(p, INPUT_PULLUP);
+  }
+  //Buttons B PIN SETUP
+  pinMode(B_button_pin, INPUT_PULLUP);
   //Buttons Callbacks
   //B->
   B_button.attachClick(onClick_B);

@@ -1,43 +1,45 @@
 void onEnter_NORMAL(){
-  /*if(xTask_handling_left_trigger_Handle == NULL){
+  //Creating task for right trigger
+  if(xTask_right_trigger_Handle == NULL){
     xTaskCreatePinnedToCore(
-      vTask_handling_left_trigger
+      vTask_Trigger
       ,
-      "Gestion des données du trigger gauche"
+      "Tâche Trigger droit"
       ,
-      1000 // Stack depth
+      2048 // Stack depth in words (not bytes)
       ,
-      NULL // pvParameters
+      &right_trigger_params // pvParameters
       ,
       1 //Priority
       ,
-      &xTask_handling_left_trigger_Handle //Task handle
+      &xTask_right_trigger_Handle //Task handle
       ,
       CORE_2 // Core on which the task will run
     );
   }
-  if(xTask_handling_right_trigger_Handle == NULL){
+  //Creating task for left trigger
+  if(xTask_left_trigger_Handle == NULL){
     xTaskCreatePinnedToCore(
-      vTask_handling_right_trigger
+      vTask_Trigger
       ,
-      "Gestion des données du trigger droit"
+      "Tâche Trigger gauche"
       ,
-      1000 // Stack depth
+      2048 // Stack depth in words (not bytes)
       ,
-      NULL // pvParameters
+      &left_trigger_params // pvParameters
       ,
       1 //Priority
       ,
-      &xTask_handling_right_trigger_Handle //Task handle
+      &xTask_left_trigger_Handle //Task handle
       ,
       CORE_2 // Core on which the task will run
     );
-  }*/
+  }
   CreateTasksForLeftJoystick();
   CreateTasksForScreen();
 }
 void onRun_NORMAL(){
- Serial.println(SendingData.button_msg);
+ //Serial.println(SendingData.button_msg);
 }
 void onExit_NORMAL(){
   

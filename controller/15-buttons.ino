@@ -1,4 +1,3 @@
-
 void writting_button_message(char msg[16]){
   strncpy( //writting into char respecting size
     SendingData.button_msg,
