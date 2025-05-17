@@ -1,9 +1,62 @@
 void onEnter_LU(){
-  
+  //Console info
+  Serial.println("Entring LOAD/UNLOAD STATE");
+  //Creation d’un timer pour la tâche
+  one_shot_timer_start(
+    "Timer Load/Unload Trash",//Description 
+    pdMS_TO_TICKS(LoadUnload_Time),//Ticks To Wait 
+    &xTask_LoadUnload_TimerHandler,//Handler
+    xTask_LoadUnload_TimerCallback //Callback
+  );
+  //Création des tâches
+  //->ServoDroit
+  if(xTask_LoadUnload_RightServo_Handle == NULL){
+    xTaskCreatePinnedToCore(
+      vTask_LoadUnload,
+      "Levage, servo droit",
+      2048, //stack in words (not bytes)
+      &parametres_servo_levage_droit, //arguments
+      1, // priority
+      &xTask_LoadUnload_RightServo_Handle,
+      CORE_2
+    );
+  }
+  //->Servo gauche
+  if(xTask_LoadUnload_LeftServo_Handle == NULL){
+    xTaskCreatePinnedToCore(
+      vTask_LoadUnload,
+      "Levage, servo gauche",
+      2048, //stack in words (not bytes)
+      &parametres_servo_levage_gauche, //arguments
+      1, // priority
+      &xTask_LoadUnload_LeftServo_Handle,
+      CORE_2
+    );
+  }
 }
 void onRun_LU(){
   
 }
 void onExit_LU(){
-  
+  //stop and delete timer
+  if (xTask_LoadUnload_TimerHandler != NULL) {
+    if (xTimerStop(xTask_LoadUnload_TimerHandler, pdMS_TO_TICKS(100)) != pdPASS) {
+      Serial.println("LU STATE: xTimerStop a échoué ou timer déjà arrêté.");
+    }
+    xTimerDelete(xTask_LoadUnload_TimerHandler, pdMS_TO_TICKS(100));
+    xTask_LoadUnload_TimerHandler = NULL;
+  }
+  //Deleting tasks
+  if(xTask_LoadUnload_RightServo_Handle != NULL){
+    vTaskDelete(xTask_LoadUnload_RightServo_Handle);
+    xTask_LoadUnload_RightServo_Handle = NULL;
+  }
+  if(xTask_LoadUnload_LeftServo_Handle != NULL){
+    vTaskDelete(xTask_LoadUnload_LeftServo_Handle);
+    xTask_LoadUnload_LeftServo_Handle = NULL;
+  }
+  //Updating vars
+  is_LoadUnload_task_complete = false;
+  //Console info
+  Serial.println("Exiting LOAD/UNLOAD STATE");
 }

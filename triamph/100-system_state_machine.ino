@@ -25,10 +25,12 @@ bool transition_4(){
   return Collecting_task_completed;
 }
 bool transition_5(){
-  return false;
+  if (strcmp(receivedData.button_msg, "X_long_press") == 0){
+    return true;
+  }else return false;
 }
 bool transition_6(){
-  return false;
+  return is_LoadUnload_task_complete;
 }
 bool transition_7(){
   return false;

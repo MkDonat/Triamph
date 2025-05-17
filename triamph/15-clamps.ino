@@ -14,10 +14,8 @@ ClampTaskParams left_clamp_params = {
 
 enum clamps_states{
   CLOSED,
-  OPENED,
-  NONE
+  OPENED
 };
-
 clamps_states clamps_current_state = OPENED;
 
 uint16_t clamps_last_consigne_pose = 1;
@@ -32,7 +30,7 @@ TimerHandle_t xTask_OC_TimerHandler = NULL;
 TaskHandle_t xTask_OC_right_Clamp_Handle = NULL; //Task Handler
 TaskHandle_t xTask_OC_left_Clamp_Handle = NULL; //Task Handler
 
-//functions
+//task timer callback
 void xTask_OC_TimerCallback(TimerHandle_t xTimer){
   //Mark the task as finished even if not (preserving processing time)
   is_OC_Clamps_task_complete = true;
@@ -43,20 +41,27 @@ void vTask_OC_clamp(void* pvParameters){
   // Vérifie si le pointeur vers la structure est nul
   if (pvParameters == nullptr) {
     Serial.println("ERREUR : paramètre nul !");
-    vTaskDelete(NULL);
+    //vTaskDelete(NULL);
+    is_OC_Clamps_task_complete = true;
+    return;
   }
 
   ClampTaskParams* params = (ClampTaskParams*) pvParameters;
-   if (params->servo == nullptr) {
+
+  if(params->servo == nullptr) {
     Serial.println("ERREUR : pointeur de servo invalide !");
-    vTaskDelete(NULL);
+    //vTaskDelete(NULL);
+    is_OC_Clamps_task_complete = true;
+    return;
   }
 
   Servo* servo = params->servo;
 
   if (!servo->attached()) {
     Serial.println("Servo non attaché !");
-    vTaskDelete(NULL);
+    //vTaskDelete(NULL);
+    is_OC_Clamps_task_complete = true;
+    return;
   }
   switch(clamps_current_state){
     case CLOSED:

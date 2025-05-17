@@ -12,10 +12,8 @@ bool is_servo_poses_equal(int16_t A, int16_t B, int16_t e){
   use cases: utilisé pour comparer deux positions A et B de servos avec une marge d’erreur e
   */
 }
-/*bool is_Loaded(){
-  if(is_servo_poses_equal(LU_LastConsignePose, LU_Loaded_pose, servo_error) == true) return true;
-  else return false;
-}*/
+bool is_Loaded(){
+}
 void servo_rollback(Servo* myservo, uint16_t from, uint16_t to, uint16_t step, uint16_t speed){
   if(from < to) return; // sécurité pour ne pas boucler à l'infini si mauvais ordre
   speed = constrain(speed, 1, 100);
