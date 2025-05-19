@@ -14,7 +14,7 @@
     TimerCallback //Callback
   );
 */
-void one_shot_timer_start(const char * const pcTimerName, const TickType_t xTimerPeriodInTicks, TimerHandle_t *xTimerHandle, TimerCallbackFunction_t pxCallbackFunction){
+void one_shot_timer_start(const char* const pcTimerName, const TickType_t xTimerPeriodInTicks, TimerHandle_t *xTimerHandle, TimerCallbackFunction_t pxCallbackFunction){
   *xTimerHandle = xTimerCreate( 
           /*const char * const pcTimerName*/pcTimerName, //short description
           /*const TickType_t xTimerPeriodInTicks*/xTimerPeriodInTicks, //period in ticks. *tips: use pdMS_TO_TICKS() to convert millis to ticks. 

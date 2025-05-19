@@ -55,7 +55,7 @@ typedef struct {
   char str[7];
 } __attribute__((packed)) esp_now_data_t;
 
-/* Global Variables */
+/* Variables */
 bool receiving_data = false;
 bool sending_data = false;
 uint32_t self_priority = 0;          // Priority of this device

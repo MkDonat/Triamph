@@ -1,6 +1,20 @@
 void onEnter_LU(){
   //Console info
   Serial.println("Entring LOAD/UNLOAD STATE");
+  //Attach-servos
+  if(!ds3218_droit.attached()){
+    ds3218_droit.attach(ds3218_droit_pin);
+  }
+  if(!ds3218_gauche.attached()){
+    ds3218_gauche.attach(ds3218_gauche_pin);
+  }
+  if(ds3218_droit.attached() && ds3218_gauche.attached()){
+    Serial.println("Servos ds3218 attached");
+  }else{
+    Serial.println("Failed to attach ds3218 servos");
+    is_LoadUnload_task_complete = false;
+    return;
+  }
   //Creation d’un timer pour la tâche
   one_shot_timer_start(
     "Timer Load/Unload Trash",//Description 
@@ -54,6 +68,18 @@ void onExit_LU(){
   if(xTask_LoadUnload_LeftServo_Handle != NULL){
     vTaskDelete(xTask_LoadUnload_LeftServo_Handle);
     xTask_LoadUnload_LeftServo_Handle = NULL;
+  }
+  //Detach-servos
+  if(ds3218_droit.attached()){
+     ds3218_droit.detach();
+  }
+  if(ds3218_gauche.attached()){
+     ds3218_gauche.detach();
+  }
+  if(ds3218_droit.attached() && ds3218_gauche.attached()){
+    Serial.println("Failed to detach ds3218 servos");
+  }else{
+    Serial.println("Servos ds3218 detached");
   }
   //Updating vars
   is_LoadUnload_task_complete = false;

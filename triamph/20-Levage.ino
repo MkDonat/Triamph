@@ -47,7 +47,7 @@ void vTask_LoadUnload(void* args){
   }
   // On récupère la structure de données
   ServoLevageParams* params = (ServoLevageParams*) args;
-  //On rećupère les paramètres
+  //now we extract parameters
   const char* name = params->name;
   Servo* servo = params->servo;
 
