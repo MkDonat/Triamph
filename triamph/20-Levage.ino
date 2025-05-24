@@ -1,16 +1,13 @@
-typedef struct {
-  const char* name;
-  Servo* servo;
-} ServoLevageParams;
-
-ServoLevageParams parametres_servo_levage_droit = {
+ServoParams parametres_servo_levage_droit = {
   .name = "ServoLevageDroit",
-  .servo = &ds3218_droit
+  .servo = &ds3218_droit,
+  .last_consigne = &ds3218_last_consigne_pose
 };
 
-ServoLevageParams parametres_servo_levage_gauche = {
+ServoParams parametres_servo_levage_gauche = {
   .name = "ServoLevageGauche",
-  .servo = &ds3218_gauche
+  .servo = &ds3218_gauche,
+  .last_consigne = &ds3218_last_consigne_pose
 };
 
 enum LU_STATES{
@@ -45,11 +42,18 @@ void vTask_LoadUnload(void* args){
     is_LoadUnload_task_complete = true;
     return;
   }
-  // On récupère la structure de données
-  ServoLevageParams* params = (ServoLevageParams*) args;
+  // Getting data structure
+  ServoParams* params = (ServoParams*) args;
   //now we extract parameters
   const char* name = params->name;
   Servo* servo = params->servo;
+  uint16_t *last_consigne = params->last_consigne;
+
+  if(*last_consigne <= 1){
+    LU_STATE = LOADED;
+  }else{
+    LU_STATE = UNLOADED;
+  }
 
   switch(LU_STATE){
     case UNLOADED:
@@ -64,6 +68,7 @@ void vTask_LoadUnload(void* args){
       LU_STATE = UNLOADED;
     break;
   }
+  *last_consigne = servo->read();
   vTaskDelay(pdMS_TO_TICKS(50)); // pour laisser le mouvement se terminer
   is_LoadUnload_task_complete = true;
 

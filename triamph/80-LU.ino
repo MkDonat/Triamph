@@ -12,7 +12,7 @@ void onEnter_LU(){
     Serial.println("Servos ds3218 attached");
   }else{
     Serial.println("Failed to attach ds3218 servos");
-    is_LoadUnload_task_complete = false;
+    is_LoadUnload_task_complete = true;
     return;
   }
   //Creation d’un timer pour la tâche
@@ -83,6 +83,8 @@ void onExit_LU(){
   }
   //Updating vars
   is_LoadUnload_task_complete = false;
+  //Storing data to flash
+  save_datas_to_flash();
   //Console info
   Serial.println("Exiting LOAD/UNLOAD STATE");
 }

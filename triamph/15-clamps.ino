@@ -1,27 +1,23 @@
-/* 
-  Les SG90 sont utilisés pour gérer l’ouverture fermeture des pinces :)
-*/
-typedef struct {
-  Servo* servo;
-} ClampTaskParams;
-
-ClampTaskParams right_clamp_params = {
-  .servo = &sg90_droit
+ServoParams right_clamp_params = {
+  .name = "right_clamp",
+  .servo = &sg90_droit,
+  .last_consigne = &sg90_last_consigne_pose
 };
-ClampTaskParams left_clamp_params = {
-  .servo = &sg90_gauche
+
+ServoParams left_clamp_params = {
+  .name = "left_clamp",
+  .servo = &sg90_gauche,
+  .last_consigne = &sg90_last_consigne_pose
 };
 
 enum clamps_states{
   CLOSED,
   OPENED
 };
-clamps_states clamps_current_state = OPENED;
+clamps_states clamps_current_state = CLOSED;
 
-uint16_t clamps_last_consigne_pose = 1;
 const uint8_t clamps_Closed_pose = 179; //Position chargée en degrés
 const uint8_t clamps_Opened_pose = 1; //Position déchargée en degrés
-uint16_t clamps_target_pose = 1;
 const uint16_t clamps_servo_step = 1;
 const uint16_t clamps_roll_speed = 100;
 const uint16_t clamps_rollback_speed = 100;
@@ -45,42 +41,34 @@ void vTask_OC_clamp(void* pvParameters){
     is_OC_Clamps_task_complete = true;
     return;
   }
+  ServoParams* params = (ServoParams*) pvParameters;
 
-  ClampTaskParams* params = (ClampTaskParams*) pvParameters;
-
-  if(params->servo == nullptr) {
-    Serial.println("ERREUR : pointeur de servo invalide !");
-    //vTaskDelete(NULL);
-    is_OC_Clamps_task_complete = true;
-    return;
-  }
-
+  //now we extract parameters
+  const char* name = params->name;
   Servo* servo = params->servo;
+  uint16_t *last_consigne = params->last_consigne;
 
-  if (!servo->attached()) {
-    Serial.println("Servo non attaché !");
-    //vTaskDelete(NULL);
-    is_OC_Clamps_task_complete = true;
-    return;
+  if(*last_consigne <= 1){
+    clamps_current_state = OPENED;
+  }else{
+    clamps_current_state = CLOSED;
   }
+
   switch(clamps_current_state){
     case CLOSED:
-      clamps_target_pose = clamps_Opened_pose;
       Serial.println("ROLLBACK");
-      servo_rollback(params->servo, clamps_last_consigne_pose, clamps_target_pose, clamps_servo_step, clamps_rollback_speed);
-      clamps_last_consigne_pose = clamps_target_pose;
+      servo_rollback(servo, clamps_Closed_pose, clamps_Opened_pose, clamps_servo_step, clamps_rollback_speed);
       clamps_current_state = OPENED;
     break;
 
     case OPENED:
-      clamps_target_pose = clamps_Closed_pose;
       Serial.println("ROLL");
-      servo_roll(params->servo, clamps_last_consigne_pose, clamps_target_pose, clamps_servo_step, clamps_roll_speed);
-      clamps_last_consigne_pose = clamps_target_pose;
+      servo_roll(servo, clamps_Opened_pose, clamps_Closed_pose, clamps_servo_step, clamps_roll_speed);
       clamps_current_state = CLOSED;
     break;
   }
-  vTaskDelay(pdMS_TO_TICKS(50)); // pour laisser le mouvement se terminer
+  *last_consigne = servo->read();
+  vTaskDelay(pdMS_TO_TICKS(50)); //Pour laisser le mouvement se terminer
   is_OC_Clamps_task_complete = true;
   for(;;){
     vTaskDelay(pdMS_TO_TICKS(100));

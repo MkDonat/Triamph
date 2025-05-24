@@ -1,3 +1,8 @@
+typedef struct {
+  const char* name;
+  Servo* servo;
+  uint16_t *last_consigne;
+} ServoParams;
 /*
 bool is_servo_poses_equal(int16_t A, int16_t B, int16_t e){
   int16_t debutA = A - e;

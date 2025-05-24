@@ -11,7 +11,7 @@ void onEnter_OC_CLAMPS(){
     Serial.println("Servos sg90 attached");
   }else{
     Serial.println("Failed to attach sg90 servos");
-    is_OC_Clamps_task_complete = false;
+    is_OC_Clamps_task_complete = true;
     return;
   }
   one_shot_timer_start(
@@ -78,5 +78,8 @@ void onExit_OC_CLAMPS(){
   }
   //updating vars
   is_OC_Clamps_task_complete = false;
+  //Storing datas to flash
+  save_datas_to_flash();
+  //Console info
   Serial.println("Exiting OC_CLAMPS STATE");
 }

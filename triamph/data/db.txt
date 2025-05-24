@@ -1,0 +1,2 @@
+{"sg90_last_consigne_pose":1,"ds3218_last_consigne_pose":1,"gps_data":[48.75608,2.302038]}
+
