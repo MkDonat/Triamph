@@ -17,36 +17,63 @@
 
 //File system datas
 JsonDocument JSONdatas;
-char serializedJSONdatas[] = "{\"sg90_last_consigne_pose\":0,\"ds3218_last_consigne_pose\":0,\"gps_data\":[48.756080,2.302038]}";;
+char serializedJSONdatas[] = "{\"sg90_last_consigne_left_clamp\":1,\"sg90_last_consigne_right_clamp\":1,\"ds3218_last_consigne_pose\":1,\"gps_data\":[48.756080,2.302038]}";
 const char *JSONdatas_file_path = "/db.txt";
-//Servos
+
+//Servos (general)
+enum servo_states{
+  CLOSED,
+  OPENED
+};
+
+uint16_t servo_error = 5; //degrés
+
+//Servos sg90 (clamps)
+servo_states left_clamp_current_state = CLOSED;
+servo_states right_clamp_current_state = CLOSED;
+uint8_t sg90_droit_pin = 4;//only pins 2,4,12-19,21-23,25-27,32-33 are recommended for servos on ESP32
+uint8_t sg90_gauche_pin = 23;
 Servo sg90_droit;
 Servo sg90_gauche;
-uint16_t sg90_last_consigne_pose = 0;
-uint8_t sg90_defaut_pose = 1;
+uint16_t sg90_last_consigne_left_clamp = 0;
+uint16_t sg90_last_consigne_right_clamp = 0;
+const uint8_t sg90_start_pose = 90; //roll
+const uint8_t sg90_end_pose = 1;
+const uint16_t sg90_step = 1;
+uint16_t sg90_roll_speed = 100;
+uint16_t sg90_rollback_speed = 100;
+bool sg90_reverse_kinematic = true;
+bool is_OC_Clamps_task_complete = false;
+
+//Servos ds3218 (Levage système or godet)
+//servo_states left_clamp_current_state = CLOSED;
+//servo_states right_clamp_current_state = CLOSED;
 Servo ds3218_droit;
 Servo ds3218_gauche;
 uint16_t ds3218_last_consigne_pose = 0;
 uint8_t ds3218_defaut_pose = 1;
-uint16_t servo_error = 5; //degrés
-//only pins 2,4,12-19,21-23,25-27,32-33 are recommended for servos on ESP32
-uint8_t sg90_droit_pin = 4;
-uint8_t sg90_gauche_pin = 23;
-uint8_t ds3218_droit_pin = 15;
+uint8_t ds3218_droit_pin = 15;//only pins 2,4,12-19,21-23,25-27,32-33 are recommended for servos on ESP32
 uint8_t ds3218_gauche_pin = 2;
-//System bool
-bool is_OC_Clamps_task_complete = false;
 bool is_LoadUnload_task_complete = false;
+
+//Water sensor
 bool is_on_water = false;
-//Définition des Fonctions
+
+//FreeRTOS
+TimerHandle_t xTask_OC_TimerHandler = NULL;
+TaskHandle_t xTask_OC_right_Clamp_Handle = NULL;
+TaskHandle_t xTask_OC_left_Clamp_Handle = NULL;
+
+//functions
 void setup_ssm();
 void system_state_machine_execute();
+void xTask_OC_TimerCallback(TimerHandle_t xTimer);
 
 void setup(){
   //Moniteur d’exception Expressif
-  esp_log_level_set("*", ESP_LOG_VERBOSE);
+    //->esp_log_level_set("*", ESP_LOG_VERBOSE);
   //Cpu frequency
-    //setCpuFrequencyMhz(80);
+    //->setCpuFrequencyMhz(80);
   //Serial Communications
   Serial.begin(SYSTEM_BAUD_RATE);
   //File system begin
@@ -70,8 +97,8 @@ void setup(){
   //Servos-set defaut poses
   ds3218_droit.write(ds3218_last_consigne_pose);
   ds3218_gauche.write(ds3218_last_consigne_pose);
-  sg90_droit.write(sg90_last_consigne_pose);
-  sg90_gauche.write(sg90_last_consigne_pose);
+  sg90_droit.write(sg90_last_consigne_right_clamp);
+  sg90_gauche.write(sg90_last_consigne_left_clamp);
   //let servos get to the pose
   delay(100);
   //Servos-dettach

@@ -47,7 +47,8 @@ void deserialize_JSONdatas(){
 
 void save_datas_to_flash(){
   // Add values in the document
-  JSONdatas["sg90_last_consigne_pose"] = sg90_last_consigne_pose;
+  JSONdatas["sg90_last_consigne_left_clamp"] = sg90_last_consigne_left_clamp;
+  JSONdatas["sg90_last_consigne_right_clamp"] = sg90_last_consigne_right_clamp;
   JSONdatas["ds3218_last_consigne_pose"] = ds3218_last_consigne_pose;
   // Add an array.
   JsonArray gps_data = JSONdatas["gps_data"].to<JsonArray>();
@@ -60,6 +61,7 @@ void save_datas_to_flash(){
 }
 
 void update_vars_from_JSONdatas(){
-  sg90_last_consigne_pose = (uint16_t)JSONdatas["sg90_last_consigne_pose"] ;
-  ds3218_last_consigne_pose = (uint16_t)JSONdatas["ds3218_last_consigne_pose"] ;
+  sg90_last_consigne_left_clamp = (uint16_t)JSONdatas["sg90_last_consigne_left_clamp"];
+  sg90_last_consigne_right_clamp = (uint16_t)JSONdatas["sg90_last_consigne_right_clamp"];
+  ds3218_last_consigne_pose = (uint16_t)JSONdatas["ds3218_last_consigne_pose"];
 }

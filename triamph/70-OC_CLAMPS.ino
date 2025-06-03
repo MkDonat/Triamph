@@ -22,7 +22,7 @@ void onEnter_OC_CLAMPS(){
   );
   if(xTask_OC_right_Clamp_Handle == NULL){
     xTaskCreatePinnedToCore(
-      vTask_OC_clamp,
+      vTaskOperateServos,
       "Ouverture/Fermeture de la pince droite",
       2048, //stack in words (not bytes)
       &right_clamp_params, //params
@@ -33,7 +33,7 @@ void onEnter_OC_CLAMPS(){
   }
   if(xTask_OC_left_Clamp_Handle == NULL){
     xTaskCreatePinnedToCore(
-      vTask_OC_clamp,
+      vTaskOperateServos,
       "Ouverture/Fermeture de la pince gauche",
       2048, //stack in words (not bytes)
       &left_clamp_params, //params
