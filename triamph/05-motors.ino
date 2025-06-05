@@ -1,4 +1,5 @@
 int16_t* THRUST_FORCE = &receivedData.L_J_analog_y;
+int16_t* YAWL_FORCE = &receivedData.L_J_analog_x;
 int8_t* dir_x = &receivedData.L_J_tor_x;
 int8_t* dir_y = &receivedData.L_J_tor_y;
 //Modes de fonctionnement des moteurs
@@ -24,8 +25,9 @@ const uint8_t resolution = 12;
 uint32_t freq = 5000;
 uint32_t duty = 0; //Rapport Cyclique courrant
 uint32_t start_duty = 0;
-uint32_t target_duty = 0; 
+uint32_t target_duty = 0;
 int max_fade_time_ms = 2000;
+uint8_t duty_map_max = 245;
 
 void setup_motors() {
   //Driver
@@ -86,7 +88,7 @@ void yaw_control_mode_select(){
     YAW_CONTROL_MODE = YAW_IDLE;
   }
 }
-void drive_motors(){ //Modif du sens de rotation
+void drive_motors(){
   if(THRUST_CONTROL_MODE == THRUST_FORWARD){
     analogWrite(IN1A_pin, duty);
     analogWrite(IN2A_pin, 0);

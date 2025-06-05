@@ -22,6 +22,14 @@ void onEnter_LU(){
     &xTask_LoadUnload_TimerHandler,//Handler
     xTask_LoadUnload_TimerCallback //Callback
   );
+
+  //test code
+  Serial.print("ds3218_reverse_kinematic: ");
+  Serial.println(ds3218_reverse_kinematic ? "true" : "false");
+
+  Serial.print("sg90_reverse_kinematic: ");
+  Serial.println(sg90_reverse_kinematic ? "true" : "false");
+
   
   //Task creation
   if(xTask_LoadUnload_RightServo_Handle == NULL){

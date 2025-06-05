@@ -30,7 +30,7 @@ uint16_t servo_error = 5; //degrés
 
 //Servos sg90 (clamps)
 servo_states sg90_left_clamp_current_state = CLOSED;
-servo_states sg90_right_clamp_current_state = CLOSED;
+servo_states sg90_right_clamp_current_state = OPENED;
 uint8_t sg90_droit_pin = 4;//only pins 2,4,12-19,21-23,25-27,32-33 are recommended for servos on ESP32
 uint8_t sg90_gauche_pin = 23;
 Servo sg90_droit;
@@ -48,7 +48,7 @@ const uint16_t OC_Time = 5000;
 
 //Servos ds3218 (Levage système or godet)
 servo_states ds3218_left_clamp_current_state = CLOSED;
-servo_states ds3218_right_clamp_current_state = CLOSED;
+servo_states ds3218_right_clamp_current_state = OPENED;
 uint8_t ds3218_droit_pin = 15;//only pins 2,4,12-19,21-23,25-27,32-33 are recommended for servos on ESP32
 uint8_t ds3218_gauche_pin = 2;
 Servo ds3218_droit;

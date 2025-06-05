@@ -42,77 +42,84 @@ void servo_roll(Servo *myservo, uint16_t from, uint16_t to, const uint8_t step, 
   myservo->write(to); // drawing last exact position
 }
 
-void vTaskOperateServos(void* pvParameters){
-
+void vTaskOperateServos(void* pvParameters) {
   if (pvParameters == nullptr) {
     Serial.println("ERREUR : paramètre nul !");
-    //vTaskDelete(NULL);
     is_OC_Clamps_task_complete = true;
     return;
   }
+
   ServoParams* params = (ServoParams*) pvParameters;
 
-  //args extraction
+  // Extraction des arguments
   const char* name = params->name;
   Servo* servo = params->servo;
-  uint16_t *last_consigne = params->last_consigne;
-  servo_states *current_state_servo_gauche = params->current_state_servo_gauche;
-  servo_states *current_state_servo_droit = params->current_state_servo_droit;
-  bool *task_complete_flag = params->task_complete_flag;
+  uint16_t* last_consigne = params->last_consigne;
+  servo_states* current_state_servo_gauche = params->current_state_servo_gauche;
+  servo_states* current_state_servo_droit = params->current_state_servo_droit;
+  bool* task_complete_flag = params->task_complete_flag;
   bool reverse_kinematic = params->reverse_kinematic;
   const uint8_t start_pose = params->start_pose;
   const uint8_t end_pose = params->end_pose;
   const uint8_t step = params->step;
   uint16_t roll_speed = params->roll_speed;
   uint16_t rollback_speed = params->rollback_speed;
-  TaskHandle_t *slave_servo_task_handler = params->slave_servo_task_handler;
+  TaskHandle_t* slave_servo_task_handler = params->slave_servo_task_handler;
 
-  //master->slave coordination
-  servo_states *this_servo_state;
-  if(name == "servo_droit"){      //<-slave
-    ulTaskNotifyTake( pdTRUE, portMAX_DELAY);
-    if(*current_state_servo_gauche == OPENED){
-      if(reverse_kinematic==true){
-        *current_state_servo_droit = CLOSED;
-      }else{
-        *current_state_servo_droit = OPENED;
-      }
-    }else{
-      if(reverse_kinematic==true){
-        *current_state_servo_droit = OPENED;
-      }else{
-        *current_state_servo_droit = CLOSED;
-      }
+  servo_states* this_servo_state;
+
+  // --------- MAÎTRE : servo_gauche ---------
+  if (strcmp(name, "servo_gauche") == 0) {
+    // Alterne l'état du maître
+    if (*current_state_servo_gauche == CLOSED) {
+      *current_state_servo_gauche = OPENED;
+    } else {
+      *current_state_servo_gauche = CLOSED;
     }
-    this_servo_state = current_state_servo_droit;
-  }else if(name == "servo_gauche"){  //<-master
-    if(*last_consigne <= 1){
-      *current_state_servo_droit = OPENED;
-    }else{
-      *current_state_servo_droit = CLOSED;
+
+    // Définit l'état du servo droit en fonction de reverse_kinematic
+    if (reverse_kinematic) {
+      *current_state_servo_droit = (*current_state_servo_gauche == OPENED) ? CLOSED : OPENED;
+    } else {
+      *current_state_servo_droit = *current_state_servo_gauche;
     }
+
+    // Envoie une notification à l'esclave
     xTaskNotifyGive(*slave_servo_task_handler);
+
     this_servo_state = current_state_servo_gauche;
+
+  // --------- ESCLAVE : servo_droit ---------
+  } else if (strcmp(name, "servo_droit") == 0) {
+    // Attend d'être notifié par le maître
+    ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+
+    // L’état du servo droit a déjà été défini par le maître
+    this_servo_state = current_state_servo_droit;
   }
 
-  //operating servo
-  switch(*this_servo_state){
+  // --------- Mouvement du servo ---------
+  Serial.print(name);
+  Serial.print(" | État : ");
+  Serial.println(*this_servo_state == OPENED ? "OPENED" : "CLOSED");
+
+  switch (*this_servo_state) {
     case CLOSED:
-      Serial.print(name);
-      Serial.println(": ROLLBACK");
-      servo_rollback(servo, start_pose, end_pose, step, rollback_speed, last_consigne);
-      *this_servo_state = OPENED;
+      Serial.print(name); Serial.println(" : ROLLBACK");
+      servo_rollback(servo, last_consigne/*start_pose*/, end_pose, step, rollback_speed, last_consigne);
     break;
     case OPENED:
-      Serial.print(name);
-      Serial.println(": ROLL");
-      servo_roll(servo, end_pose, start_pose, step, roll_speed, last_consigne);
-      *this_servo_state = CLOSED;
+      Serial.print(name); Serial.println(" : ROLL");
+      servo_roll(servo, last_consigne/*end_pose*/, start_pose, step, roll_speed, last_consigne);
     break;
   }
-  vTaskDelay(pdMS_TO_TICKS(50));//let servos operate
+
+  // Drapeau de complétion + tempo
+  vTaskDelay(pdMS_TO_TICKS(50));
   *task_complete_flag = true;
-  for(;;){
+
+  // Boucle passive (garde la tâche vivante)
+  for (;;) {
     vTaskDelay(pdMS_TO_TICKS(100));
   }
 }

@@ -53,10 +53,18 @@ bool transition_10(){
   }
 }
 bool transition_11(){
-  return false;
+  if( *dir_x == 1 || *dir_x == -1 ){
+    return true;
+  }else{
+    return false;
+  } 
 }
 bool transition_12(){
-  return false;
+  if( *dir_x == 1 || *dir_x == -1 ){
+    return false;
+  }else{
+    return true;
+  } 
 }
 bool transition_13(){
   if (strcmp(receivedData.button_msg, "A_long_press") == 0){
@@ -77,7 +85,7 @@ void setup_ssm(){
     "la machine à état...",
     nullptr, //onEnter_...
     onExit_STARTING,
-    nullptr //onRun_
+    nullptr //onRun_...
   );
 
   State* SETTING = ssm.addState(
