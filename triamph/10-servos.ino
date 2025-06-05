@@ -11,15 +11,16 @@ typedef struct {
   const uint8_t step;
   uint16_t roll_speed;
   uint16_t rollback_speed;
-
+  TaskHandle_t *slave_servo_task_handler;
 } ServoParams;
 
-void servo_rollback(Servo* myservo, uint16_t from, uint16_t to, const uint8_t step, uint16_t speed){
+void servo_rollback(Servo* myservo, uint16_t from, uint16_t to, const uint8_t step, uint16_t speed, uint16_t *last_consigne){
   if(from < to) return; //avoid infinite loop in case of misplaced 'from' and 'to' positions
   speed = constrain(speed, 1, 100);
   speed = map(speed,1,100,1,1000);
   for (uint16_t pos = from; pos >= to; pos -= step){
-    myservo->write(pos);             
+    myservo->write(pos);
+    *last_consigne = myservo->read();             
     vTaskDelay(pdMS_TO_TICKS(15000/speed));
     //Serial.println(myservo->read());
     if (pos < step) break; // avoid underflow of uint16_t               
@@ -27,12 +28,13 @@ void servo_rollback(Servo* myservo, uint16_t from, uint16_t to, const uint8_t st
   myservo->write(to); // drawing last exact position
 }
 
-void servo_roll(Servo *myservo, uint16_t from, uint16_t to, const uint8_t step, uint16_t speed){
+void servo_roll(Servo *myservo, uint16_t from, uint16_t to, const uint8_t step, uint16_t speed, uint16_t *last_consigne){
   if(from > to) return; //avoid infinite loop in case of misplaced 'from' and 'to' positions
   speed = constrain(speed, 1, 100);
   speed = map(speed,0,100,1,1000);
   for (uint16_t pos = from; pos <= to; pos += step){
-    myservo->write(pos);         
+    myservo->write(pos);
+    *last_consigne = myservo->read();          
     vTaskDelay(pdMS_TO_TICKS(15000/speed));
     //Serial.println(myservo->read());
     if (UINT16_MAX - pos < step) break; // avoid overflow of uint16_t             
@@ -63,11 +65,12 @@ void vTaskOperateServos(void* pvParameters){
   const uint8_t step = params->step;
   uint16_t roll_speed = params->roll_speed;
   uint16_t rollback_speed = params->rollback_speed;
+  TaskHandle_t *slave_servo_task_handler = params->slave_servo_task_handler;
 
   //master->slave coordination
   servo_states *this_servo_state;
   if(name == "servo_droit"){      //<-slave
-    ulTaskNotifyTake( pdTRUE, pdMS_TO_TICKS(100));
+    ulTaskNotifyTake( pdTRUE, portMAX_DELAY);
     if(*current_state_servo_gauche == OPENED){
       if(reverse_kinematic==true){
         *current_state_servo_droit = CLOSED;
@@ -88,7 +91,7 @@ void vTaskOperateServos(void* pvParameters){
     }else{
       *current_state_servo_droit = CLOSED;
     }
-    xTaskNotifyGive(xTask_OC_right_Clamp_Handle);
+    xTaskNotifyGive(*slave_servo_task_handler);
     this_servo_state = current_state_servo_gauche;
   }
 
@@ -97,13 +100,13 @@ void vTaskOperateServos(void* pvParameters){
     case CLOSED:
       Serial.print(name);
       Serial.println(": ROLLBACK");
-      servo_rollback(servo, start_pose, end_pose, step, rollback_speed);
+      servo_rollback(servo, start_pose, end_pose, step, rollback_speed, last_consigne);
       *this_servo_state = OPENED;
     break;
     case OPENED:
       Serial.print(name);
       Serial.println(": ROLL");
-      servo_roll(servo, end_pose, start_pose, step, roll_speed);
+      servo_roll(servo, end_pose, start_pose, step, roll_speed, last_consigne);
       *this_servo_state = CLOSED;
     break;
   }

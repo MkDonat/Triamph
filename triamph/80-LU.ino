@@ -22,26 +22,26 @@ void onEnter_LU(){
     &xTask_LoadUnload_TimerHandler,//Handler
     xTask_LoadUnload_TimerCallback //Callback
   );
-  //Création des tâches
-  //->ServoDroit
+  
+  //Task creation
   if(xTask_LoadUnload_RightServo_Handle == NULL){
     xTaskCreatePinnedToCore(
-      vTask_LoadUnload,
+      vTaskOperateServos,
       "Levage, servo droit",
       2048, //stack in words (not bytes)
-      &parametres_servo_levage_droit, //arguments
+      &right_servo_levage_params, //arguments
       1, // priority
       &xTask_LoadUnload_RightServo_Handle,
       CORE_2
     );
   }
-  //->Servo gauche
+  
   if(xTask_LoadUnload_LeftServo_Handle == NULL){
     xTaskCreatePinnedToCore(
-      vTask_LoadUnload,
+      vTaskOperateServos,
       "Levage, servo gauche",
       2048, //stack in words (not bytes)
-      &parametres_servo_levage_gauche, //arguments
+      &left_servo_levage_params, //arguments
       1, // priority
       &xTask_LoadUnload_LeftServo_Handle,
       CORE_2
@@ -49,7 +49,8 @@ void onEnter_LU(){
   }
 }
 void onRun_LU(){
-  
+  save_datas_to_flash();
+  vTaskDelay(pdMS_TO_TICKS(100));
 }
 void onExit_LU(){
   //stop and delete timer
@@ -83,8 +84,6 @@ void onExit_LU(){
   }
   //Updating vars
   is_LoadUnload_task_complete = false;
-  //Storing data to flash
-  save_datas_to_flash();
   //Console info
   Serial.println("Exiting LOAD/UNLOAD STATE");
 }

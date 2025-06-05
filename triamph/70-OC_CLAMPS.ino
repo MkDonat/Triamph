@@ -16,7 +16,7 @@ void onEnter_OC_CLAMPS(){
   }
   one_shot_timer_start(
     "Timer open/close clamps",
-    pdMS_TO_TICKS(5000),//Ticks To Wait 
+    pdMS_TO_TICKS(OC_Time),//Ticks To Wait 
     &xTask_OC_TimerHandler,//Handler
     xTask_OC_TimerCallback //Callback
   );
@@ -44,7 +44,8 @@ void onEnter_OC_CLAMPS(){
   }
 }
 void onRun_OC_CLAMPS(){
-
+  save_datas_to_flash();
+  vTaskDelay(pdMS_TO_TICKS(100));
 }
 void onExit_OC_CLAMPS(){
   //stop and delete timer
@@ -78,8 +79,6 @@ void onExit_OC_CLAMPS(){
   }
   //updating vars
   is_OC_Clamps_task_complete = false;
-  //Storing datas to flash
-  save_datas_to_flash();
   //Console info
   Serial.println("Exiting OC_CLAMPS STATE");
 }

@@ -15,7 +15,7 @@ uint32_t freq_verin = 500;
 uint32_t duty_verin = 0; //Rapport Cyclique courrant
 //COLLECTING Task Timer settings
 TimerHandle_t xTask_COLLECTING_TimerHandler = NULL;
-uint32_t xTask_COLLECTING_length = 7000; //20sec
+uint32_t xTask_COLLECTING_length = 10000; 
 void xTask_COLLECTING_TimerCallback(TimerHandle_t xTimer);
 //COLLECTING Task settings
 bool Collecting_task_completed = false;

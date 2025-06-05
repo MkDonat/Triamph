@@ -14,7 +14,7 @@ String readStringFromFile(fs::FS &fs, const char *path) {
 }
 
 void writeFile(fs::FS &fs, const char *path, char message[]){
-  Serial.printf("Writing file: %s\r\n", path);
+  //Serial.printf("Writing file: %s\r\n", path);
 
   File file = fs.open(path, FILE_WRITE);
   if (!file) {
@@ -22,7 +22,7 @@ void writeFile(fs::FS &fs, const char *path, char message[]){
     return;
   }
   if (file.print(message)) {
-    Serial.println("- file written");
+    //Serial.println("- file written");
   } else {
     Serial.println("- write failed");
   }
@@ -47,9 +47,10 @@ void deserialize_JSONdatas(){
 
 void save_datas_to_flash(){
   // Add values in the document
-  JSONdatas["sg90_last_consigne_left_clamp"] = sg90_last_consigne_left_clamp;
-  JSONdatas["sg90_last_consigne_right_clamp"] = sg90_last_consigne_right_clamp;
-  JSONdatas["ds3218_last_consigne_pose"] = ds3218_last_consigne_pose;
+  JSONdatas["sg90_left_last_consigne"] = sg90_left_last_consigne;
+  JSONdatas["sg90_right_last_consigne"] = sg90_right_last_consigne;
+  JSONdatas["ds3218_left_last_consigne"] = ds3218_left_last_consigne;
+  JSONdatas["ds3218_right_last_consigne"] = ds3218_right_last_consigne;
   // Add an array.
   JsonArray gps_data = JSONdatas["gps_data"].to<JsonArray>();
   gps_data.add(48.756080);
@@ -61,7 +62,8 @@ void save_datas_to_flash(){
 }
 
 void update_vars_from_JSONdatas(){
-  sg90_last_consigne_left_clamp = (uint16_t)JSONdatas["sg90_last_consigne_left_clamp"];
-  sg90_last_consigne_right_clamp = (uint16_t)JSONdatas["sg90_last_consigne_right_clamp"];
-  ds3218_last_consigne_pose = (uint16_t)JSONdatas["ds3218_last_consigne_pose"];
+  sg90_left_last_consigne = (uint16_t)JSONdatas["sg90_left_last_consigne"];
+  sg90_right_last_consigne = (uint16_t)JSONdatas["sg90_right_last_consigne"];
+  ds3218_left_last_consigne = (uint16_t)JSONdatas["ds3218_left_last_consigne"];
+  ds3218_right_last_consigne = (uint16_t)JSONdatas["ds3218_right_last_consigne"];
 }
