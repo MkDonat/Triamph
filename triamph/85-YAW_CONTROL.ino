@@ -19,5 +19,6 @@ void onRun_YAW_CONTROL(){
 void onExit_YAW_CONTROL(){
   YAW_CONTROL_MODE = YAW_IDLE;
   Serial.println("EXITING YAW CONTROL MODE");
+  delay(no_driver_shorcut_delay);
   stop_motors();
 }

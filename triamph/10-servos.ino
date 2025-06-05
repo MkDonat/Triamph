@@ -54,7 +54,7 @@ void vTaskOperateServos(void* pvParameters) {
   // Extraction des arguments
   const char* name = params->name;
   Servo* servo = params->servo;
-  uint16_t* last_consigne = params->last_consigne;
+  uint16_t *last_consigne = params->last_consigne;
   servo_states* current_state_servo_gauche = params->current_state_servo_gauche;
   servo_states* current_state_servo_droit = params->current_state_servo_droit;
   bool* task_complete_flag = params->task_complete_flag;
@@ -103,14 +103,15 @@ void vTaskOperateServos(void* pvParameters) {
   Serial.print(" | État : ");
   Serial.println(*this_servo_state == OPENED ? "OPENED" : "CLOSED");
 
+  uint16_t start_point = *last_consigne;
   switch (*this_servo_state) {
     case CLOSED:
       Serial.print(name); Serial.println(" : ROLLBACK");
-      servo_rollback(servo, last_consigne/*start_pose*/, end_pose, step, rollback_speed, last_consigne);
+      servo_rollback(servo, start_point/*start_pose*/, end_pose, step, rollback_speed, last_consigne);
     break;
     case OPENED:
       Serial.print(name); Serial.println(" : ROLL");
-      servo_roll(servo, last_consigne/*end_pose*/, start_pose, step, roll_speed, last_consigne);
+      servo_roll(servo, start_point/*end_pose*/, start_pose, step, roll_speed, last_consigne);
     break;
   }
 

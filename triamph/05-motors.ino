@@ -27,7 +27,8 @@ uint32_t duty = 0; //Rapport Cyclique courrant
 uint32_t start_duty = 0;
 uint32_t target_duty = 0;
 int max_fade_time_ms = 2000;
-uint8_t duty_map_max = 245;
+uint8_t duty_map_max = 240;
+uint32_t no_driver_shorcut_delay = 200;
 
 void setup_motors() {
   //Driver

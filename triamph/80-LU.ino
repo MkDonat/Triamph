@@ -80,10 +80,10 @@ void onExit_LU(){
   }
   //Detach-servos
   if(ds3218_droit.attached()){
-     ds3218_droit.detach();
+     //ds3218_droit.detach();
   }
   if(ds3218_gauche.attached()){
-     ds3218_gauche.detach();
+     //ds3218_gauche.detach();
   }
   if(ds3218_droit.attached() && ds3218_gauche.attached()){
     Serial.println("Failed to detach ds3218 servos");

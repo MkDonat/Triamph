@@ -19,5 +19,6 @@ void onRun_THRUST_CONTROL(){
 void onExit_THRUST_CONTROL(){
   THRUST_CONTROL_MODE = THRUST_IDLE;
   Serial.println("EXITING THRUST CONTROL MODE");
+  delay(no_driver_shorcut_delay);
   stop_motors();
 }

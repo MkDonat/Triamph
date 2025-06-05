@@ -115,8 +115,8 @@ void setup(){
   //let servos get to the pose
   delay(100);
   //Servos-dettach
-  ds3218_droit.detach();
-  ds3218_gauche.detach();
+  //ds3218_droit.detach();
+  //ds3218_gauche.detach();
   sg90_droit.detach();
   sg90_gauche.detach();
   //System State Machine
