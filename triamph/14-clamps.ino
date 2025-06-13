@@ -1,4 +1,4 @@
-ServoParams right_clamp_params = {
+ServoParams right_clamp_params = { //179->ouvert //90->fermé
   .name = "servo_droit",
   .servo = &sg90_droit,
   .last_consigne = &sg90_right_last_consigne,

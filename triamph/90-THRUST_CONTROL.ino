@@ -4,21 +4,24 @@ void onEnter_THRUST_CONTROL(){
 }
 void onRun_THRUST_CONTROL(){
   if(THRUST_CONTROL_MODE == THRUST_FORWARD){
-    duty = map(
-      (uint32_t)*THRUST_FORCE, 2047, 4095,
+    raw_duty = map(
+      *THRUST_FORCE, 2047, 0
+      ,
       0,duty_map_max
     );
   }else if(THRUST_CONTROL_MODE == THRUST_BACKWARD){
-    duty = map(
-      (uint32_t)*THRUST_FORCE, 2047, 0,
+    raw_duty = map(
+      *THRUST_FORCE, 2047, 4095
+      ,
       0,duty_map_max
     );
   }
+  duty = Progressive_filtering_of_the_duty_cycle(duty, raw_duty, ramp_rate);
   drive_motors();
 }
 void onExit_THRUST_CONTROL(){
+  duty = 0;
+  stop_motors();
   THRUST_CONTROL_MODE = THRUST_IDLE;
   Serial.println("EXITING THRUST CONTROL MODE");
-  delay(no_driver_shorcut_delay);
-  stop_motors();
 }

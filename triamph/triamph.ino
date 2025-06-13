@@ -64,8 +64,13 @@ bool ds3218_reverse_kinematic = true;
 bool is_LoadUnload_task_complete = false;
 const uint16_t LoadUnload_Time = 15000;
 
-//Water sensor
-bool is_on_water = false;
+// === Water sensor ===
+const int sensorPin = 34; // Analog-capable pin on ESP32
+int sensorValue = 0;
+bool sensorPresent = true;
+const int water_threshold = 1500;
+const int max_adc_value = 4095;
+bool waterSensorError = false;
 
 //FreeRTOS
 TimerHandle_t xTask_OC_TimerHandler = NULL;
@@ -131,4 +136,5 @@ void loop(){
   system_state_machine_execute();
   vTaskDelay(pdMS_TO_TICKS(10));
   //Serial.printf("sg90:%d , ds3218:%d\n",sg90_last_consigne_pose,ds3218_last_consigne_pose);
+  operating_water_sensor();
 }

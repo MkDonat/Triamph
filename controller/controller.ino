@@ -30,12 +30,18 @@ U8G2_SSD1309_128X64_NONAME2_1_4W_SW_SPI u8g2(
   ,
   4 // RESET (RES)
 );
+
+//is_on_water_led_info
+uint8_t led_is_on_water_pin = 14;
+
 //triggers
 uint8_t left_trigger_pin = 33;
 uint8_t right_trigger_pin = 32;
+
 //left joystick
-uint8_t left_joystick_pin_x = 34;
-uint8_t left_joystick_pin_y = 35;
+uint8_t left_joystick_pin_x = 35;
+uint8_t left_joystick_pin_y = 34;
+
 //PCF8574 PINS (IO EXPANDER)
 uint8_t pcf_P0 = 0;
 uint8_t pcf_P1 = 1;
@@ -45,6 +51,7 @@ uint8_t pcf_P4 = 4;
 uint8_t pcf_P5 = 5;
 uint8_t pcf_P6 = 6;
 uint8_t pcf_P7 = 7;
+
 //Buttons pins
 uint8_t B_button_pin;
 uint8_t A_button_pin;
@@ -55,6 +62,7 @@ uint8_t RIGHT_button_pin;
 uint8_t UP_button_pin;
 uint8_t DOWN_button_pin;
 uint8_t SHARE_button_pin;
+
 //Buttons
 OneButton B_button;
 OneButton A_button;
@@ -65,8 +73,13 @@ OneButton RIGHT_button;
 OneButton UP_button;
 OneButton DOWN_button;
 OneButton SHARE_button;
+
 //PCF8574 OBJ
 Adafruit_PCF8574 pcf;
+
+//-----FreeRTOS-----
+TaskHandle_t xTask_left_joystick_Handle = NULL;
+
 
 void setup(){
   //setCpuFrequencyMhz(80);
@@ -75,21 +88,23 @@ void setup(){
   //triggers
   pinMode(left_trigger_pin,INPUT);
   pinMode(right_trigger_pin,INPUT);
+  //led_is_on_water
+  pinMode(led_is_on_water_pin, OUTPUT);
   //left joystick
-  pinMode(left_joystick_pin_x,INPUT);
-  pinMode(left_joystick_pin_y,INPUT);
+  pinMode(left_joystick_pin_x, INPUT);
+  pinMode(left_joystick_pin_y, INPUT);
   //Button pin assign
   B_button_pin = 19;
   A_button_pin = pcf_P0;
   X_button_pin = pcf_P1;
   Y_button_pin = pcf_P2;
-  LEFT_button_pin = pcf_P3;
-  RIGHT_button_pin = pcf_P4;
-  UP_button_pin = pcf_P5;
-  DOWN_button_pin = pcf_P6;
-  SHARE_button_pin = pcf_P7;
+  LEFT_button_pin = pcf_P4;
+  RIGHT_button_pin = pcf_P5;
+  UP_button_pin = pcf_P6;
+  DOWN_button_pin = pcf_P7;
+  SHARE_button_pin = pcf_P3;
   //Configuring PCF8574 button mode
-  if (!pcf.begin(0x38, &Wire)) { //0x20
+  if (!pcf.begin(0x38, &Wire)) { //0x20 //0x38
     Serial.println("Couldn't find PCF8574");
     while (1);
   }
@@ -162,13 +177,15 @@ void loop(){
   UP_button.tick(pcf.digitalRead(UP_button_pin) == LOW);
   DOWN_button.tick(pcf.digitalRead(DOWN_button_pin) == LOW);
   SHARE_button.tick(pcf.digitalRead(SHARE_button_pin) == LOW);
-  //NOW
+  //ESP-NOW
   broadcast();
-  //State machine tick
+  //State machine
   csm_execute();
   //Handle buttons message
   if(B_button.isIdle()==true && A_button.isIdle()==true && X_button.isIdle()==true && Y_button.isIdle()==true && LEFT_button.isIdle()==true && RIGHT_button.isIdle()==true && UP_button.isIdle()==true && DOWN_button.isIdle()==true && SHARE_button.isIdle()==true){
     writting_button_message("");
   }
+  //Led_is_on_water
+  operate_led_is_on_water();
   vTaskDelay(pdMS_TO_TICKS(10));
 }

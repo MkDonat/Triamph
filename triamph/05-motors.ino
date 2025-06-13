@@ -23,12 +23,21 @@ byte IN2B_pin = 33;
 //Motors
 const uint8_t resolution = 12;
 uint32_t freq = 5000;
-uint32_t duty = 0; //Rapport Cyclique courrant
+uint32_t duty = 0; //safe and usable duty
+uint32_t raw_duty = 0;
+float ramp_rate = 3.0; // lowest == smothest
 uint32_t start_duty = 0;
 uint32_t target_duty = 0;
-int max_fade_time_ms = 2000;
-uint8_t duty_map_max = 240;
-uint32_t no_driver_shorcut_delay = 200;
+uint8_t duty_map_max = 247; //97% * 255
+
+uint32_t Progressive_filtering_of_the_duty_cycle(uint32_t duty_safe, uint32_t duty_target, float ramp_rate){
+  if (duty_safe < duty_target) {
+    duty_safe += min((int)ramp_rate, (int)(duty_target - duty_safe));
+  } else if (duty_safe > duty_target) {
+    duty_safe -= min((int)ramp_rate, (int)(duty_safe - duty_target));
+  }
+  return duty_safe;
+}
 
 void setup_motors() {
   //Driver
@@ -69,6 +78,7 @@ void setup_motors() {
     freq//uint32_t freq
   );
 }
+
 void thrust_control_mode_select(){
   if( *dir_y == 1 ){
     THRUST_CONTROL_MODE = THRUST_FORWARD;
@@ -79,6 +89,7 @@ void thrust_control_mode_select(){
     THRUST_CONTROL_MODE = THRUST_IDLE;
   }
 }
+
 void yaw_control_mode_select(){
   if( *dir_x == 1 ){
     YAW_CONTROL_MODE = YAW_CLOCKWISE;
@@ -89,6 +100,7 @@ void yaw_control_mode_select(){
     YAW_CONTROL_MODE = YAW_IDLE;
   }
 }
+
 void drive_motors(){
   if(THRUST_CONTROL_MODE == THRUST_FORWARD){
     analogWrite(IN1A_pin, duty);
@@ -115,10 +127,10 @@ void drive_motors(){
     analogWrite(IN2B_pin, duty);
   }
 }
+
 void stop_motors(){
   analogWrite(IN1A_pin, 0);
   analogWrite(IN1B_pin, 0);
   analogWrite(IN2A_pin, 0);
   analogWrite(IN2B_pin, 0);
-  THRUST_CONTROL_MODE = THRUST_IDLE;                 
 }
