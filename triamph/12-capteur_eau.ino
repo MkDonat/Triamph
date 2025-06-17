@@ -1,4 +1,4 @@
-bool *is_on_water = &SendingData.is_on_water;
+bool is_on_water = false;
 
 // === Water Sensor Functions ===
 void setup_water_sensor() {
@@ -30,13 +30,13 @@ void operating_water_sensor(){
   //Serial.println(SendingData.is_on_water);
 
   if (sensorValue == max_adc_value) {
-    *is_on_water = false;
+    is_on_water = false;
     waterSensorError = true;
   } else if (sensorValue >= water_threshold) {
-    *is_on_water = true;
+    is_on_water = true;
     waterSensorError = false;
   } else {
-    *is_on_water = false;
+    is_on_water = false;
     waterSensorError = false;
   }
 

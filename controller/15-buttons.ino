@@ -9,20 +9,20 @@ void writting_button_message(char msg[16]){
 //if (strcmp(SendingData.B_button_Event, "click") == 0)
 /* -B- */
 void onClick_B(){
-  writting_button_message("B_click");
+  writting_button_message("COLLECT");
 }
 void onLongPress_B(){
-  writting_button_message("B_long_press");
+  writting_button_message("BACK2HOME");
 }
 void duringLongPress_B(){
   writting_button_message("");
 }
 /* -A- */
 void onClick_A(){
-  writting_button_message("A_click");
+  writting_button_message("CLAMPS");
 }
 void onLongPress_A(){
-  writting_button_message("A_long_press");
+  writting_button_message("LOAD_UNLOAD");
 }
 void duringLongPress_A(){
   writting_button_message("");

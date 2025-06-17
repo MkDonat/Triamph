@@ -20,6 +20,12 @@ JsonDocument JSONdatas;
 char serializedJSONdatas[] = "{\"sg90_left_last_consigne\":1,\"sg90_right_last_consigne\":90,\"ds3218_left_last_consigne\":1,\"ds3218_right_last_consigne\":1,\"gps_data\":[48.75608,2.302038]}";
 const char *JSONdatas_file_path = "/db.txt";
 
+//System enum
+enum TRIAMPH_MILIEU{
+  ON_WATER,
+  ON_LAND
+};
+
 //Servos (general)
 enum servo_states{
   CLOSED,
@@ -37,8 +43,10 @@ Servo sg90_droit;
 Servo sg90_gauche;
 uint16_t sg90_left_last_consigne = 0;
 uint16_t sg90_right_last_consigne = 0;
-const uint8_t sg90_start_pose = 90; //roll
-const uint8_t sg90_end_pose = 1;
+const uint8_t sg90_left_start_pose = 90;
+const uint8_t sg90_left_end_pose = 179;
+const uint8_t sg90_right_start_pose = 1;
+const uint8_t sg90_right_end_pose = 90;
 const uint16_t sg90_step = 1;
 uint16_t sg90_roll_speed = 100; //0-100
 uint16_t sg90_rollback_speed = 100; //0-100

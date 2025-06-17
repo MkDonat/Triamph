@@ -31,9 +31,6 @@ U8G2_SSD1309_128X64_NONAME2_1_4W_SW_SPI u8g2(
   4 // RESET (RES)
 );
 
-//is_on_water_led_info
-uint8_t led_is_on_water_pin = 14;
-
 //triggers
 uint8_t left_trigger_pin = 33;
 uint8_t right_trigger_pin = 32;
@@ -42,40 +39,13 @@ uint8_t right_trigger_pin = 32;
 uint8_t left_joystick_pin_x = 35;
 uint8_t left_joystick_pin_y = 34;
 
-//PCF8574 PINS (IO EXPANDER)
-uint8_t pcf_P0 = 0;
-uint8_t pcf_P1 = 1;
-uint8_t pcf_P2 = 2;
-uint8_t pcf_P3 = 3;
-uint8_t pcf_P4 = 4;
-uint8_t pcf_P5 = 5;
-uint8_t pcf_P6 = 6;
-uint8_t pcf_P7 = 7;
-
 //Buttons pins
-uint8_t B_button_pin;
-uint8_t A_button_pin;
-uint8_t X_button_pin;
-uint8_t Y_button_pin;
-uint8_t LEFT_button_pin;
-uint8_t RIGHT_button_pin;
-uint8_t UP_button_pin;
-uint8_t DOWN_button_pin;
-uint8_t SHARE_button_pin;
+uint8_t B_button_pin = 13;
+uint8_t A_button_pin = 14;
 
 //Buttons
 OneButton B_button;
 OneButton A_button;
-OneButton X_button;
-OneButton Y_button;
-OneButton LEFT_button;
-OneButton RIGHT_button;
-OneButton UP_button;
-OneButton DOWN_button;
-OneButton SHARE_button;
-
-//PCF8574 OBJ
-Adafruit_PCF8574 pcf;
 
 //-----FreeRTOS-----
 TaskHandle_t xTask_left_joystick_Handle = NULL;
@@ -85,34 +55,12 @@ void setup(){
   //setCpuFrequencyMhz(80);
   //communications
   Serial.begin(SYSTEM_BAUD_RATE);
-  //triggers
-  pinMode(left_trigger_pin,INPUT);
-  pinMode(right_trigger_pin,INPUT);
-  //led_is_on_water
-  pinMode(led_is_on_water_pin, OUTPUT);
   //left joystick
   pinMode(left_joystick_pin_x, INPUT);
   pinMode(left_joystick_pin_y, INPUT);
-  //Button pin assign
-  B_button_pin = 19;
-  A_button_pin = pcf_P0;
-  X_button_pin = pcf_P1;
-  Y_button_pin = pcf_P2;
-  LEFT_button_pin = pcf_P4;
-  RIGHT_button_pin = pcf_P5;
-  UP_button_pin = pcf_P6;
-  DOWN_button_pin = pcf_P7;
-  SHARE_button_pin = pcf_P3;
-  //Configuring PCF8574 button mode
-  if (!pcf.begin(0x38, &Wire)) { //0x20 //0x38
-    Serial.println("Couldn't find PCF8574");
-    while (1);
-  }
-  for (uint8_t p=0; p<8; p++) {
-    pcf.pinMode(p, INPUT_PULLUP);
-  }
   //Buttons B PIN SETUP
   pinMode(B_button_pin, INPUT_PULLUP);
+  pinMode(A_button_pin, INPUT_PULLUP);
   //Buttons Callbacks
   //B->
   B_button.attachClick(onClick_B);
@@ -124,41 +72,6 @@ void setup(){
   A_button.attachLongPressStart(onLongPress_A);
   A_button.attachDuringLongPress(duringLongPress_A);
   A_button.setLongPressIntervalMs(1000);
-  //X->
-  X_button.attachClick(onClick_X);
-  X_button.attachLongPressStart(onLongPress_X);
-  X_button.attachDuringLongPress(duringLongPress_X);
-  X_button.setLongPressIntervalMs(1000);
-  //Y->
-  Y_button.attachClick(onClick_Y);
-  Y_button.attachLongPressStart(onLongPress_Y);
-  Y_button.attachDuringLongPress(duringLongPress_Y);
-  Y_button.setLongPressIntervalMs(1000);
-  //LEFT->
-  LEFT_button.attachClick(onClick_LEFT);
-  LEFT_button.attachLongPressStart(onLongPress_LEFT);
-  LEFT_button.attachDuringLongPress(duringLongPress_LEFT);
-  LEFT_button.setLongPressIntervalMs(1000);
-  //RIGH->
-  RIGHT_button.attachClick(onClick_RIGHT);
-  RIGHT_button.attachLongPressStart(onLongPress_RIGHT);
-  RIGHT_button.attachDuringLongPress(duringLongPress_RIGHT);
-  RIGHT_button.setLongPressIntervalMs(1000);
-  //UP->
-  UP_button.attachClick(onClick_UP);
-  UP_button.attachLongPressStart(onLongPress_UP);
-  UP_button.attachDuringLongPress(duringLongPress_UP);
-  UP_button.setLongPressIntervalMs(1000);
-  //DOWN->
-  DOWN_button.attachClick(onClick_DOWN);
-  DOWN_button.attachLongPressStart(onLongPress_DOWN);
-  DOWN_button.attachDuringLongPress(duringLongPress_DOWN);
-  DOWN_button.setLongPressIntervalMs(1000);
-  //SHARE->
-  SHARE_button.attachClick(onClick_SHARE);
-  SHARE_button.attachLongPressStart(onLongPress_SHARE);
-  SHARE_button.attachDuringLongPress(duringLongPress_SHARE);
-  SHARE_button.setLongPressIntervalMs(1000);
   //FREERTOS TASKS
     //CreateTasksForJoystick();
   setup_broadcast();
@@ -169,23 +82,14 @@ void setup(){
 void loop(){
   //Buttons tick
   B_button.tick(digitalRead(B_button_pin) == LOW);
-  A_button.tick(pcf.digitalRead(A_button_pin) == LOW);
-  X_button.tick(pcf.digitalRead(X_button_pin) == LOW);
-  Y_button.tick(pcf.digitalRead(Y_button_pin) == LOW);
-  LEFT_button.tick(pcf.digitalRead(LEFT_button_pin) == LOW);
-  RIGHT_button.tick(pcf.digitalRead(RIGHT_button_pin) == LOW);
-  UP_button.tick(pcf.digitalRead(UP_button_pin) == LOW);
-  DOWN_button.tick(pcf.digitalRead(DOWN_button_pin) == LOW);
-  SHARE_button.tick(pcf.digitalRead(SHARE_button_pin) == LOW);
+  A_button.tick(digitalRead(A_button_pin) == LOW);
   //ESP-NOW
   broadcast();
   //State machine
   csm_execute();
   //Handle buttons message
-  if(B_button.isIdle()==true && A_button.isIdle()==true && X_button.isIdle()==true && Y_button.isIdle()==true && LEFT_button.isIdle()==true && RIGHT_button.isIdle()==true && UP_button.isIdle()==true && DOWN_button.isIdle()==true && SHARE_button.isIdle()==true){
+  if(B_button.isIdle() == true && A_button.isIdle() == true){
     writting_button_message("");
   }
-  //Led_is_on_water
-  operate_led_is_on_water();
   vTaskDelay(pdMS_TO_TICKS(10));
 }

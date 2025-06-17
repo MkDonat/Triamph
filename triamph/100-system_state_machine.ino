@@ -17,7 +17,7 @@ bool transition_2(){
   return false;
 }
 bool transition_3(){
-  if (strcmp(receivedData.button_msg, "Y_long_press") == 0){
+  if (strcmp(receivedData.button_msg, "COLLECT") == 0){
     return true;
   }else return false;
 }
@@ -25,7 +25,7 @@ bool transition_4(){
   return Collecting_task_completed;
 }
 bool transition_5(){
-  if (strcmp(receivedData.button_msg, "X_long_press") == 0){
+  if (strcmp(receivedData.button_msg, "LOAD_UNLOAD") == 0){
     return true;
   }else return false;
 }
@@ -67,7 +67,7 @@ bool transition_12(){
   } 
 }
 bool transition_13(){
-  if (strcmp(receivedData.button_msg, "A_long_press") == 0){
+  if (strcmp(receivedData.button_msg, "CLAMPS") == 0){
     return true;
   }else return false;
   //return false;
@@ -153,7 +153,6 @@ void setup_ssm(){
 
   /*T1**/SETTING->addTransition(IDLE,transition_1);
   /*T2**/IDLE->addTransition(SETTING,transition_2);
-
 
   /*T3**/IDLE->addTransition(COLLECTING,transition_3);
   /*T4**/COLLECTING->addTransition(IDLE,transition_4);

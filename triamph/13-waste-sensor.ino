@@ -130,7 +130,7 @@ void Check_if_collecting_is_possible () {
 void Check_if_unloading_is_possible () {
   Serial.println("Attempting to unload...");
 
-    if (*is_on_water) {
+    if (is_on_water) {
       Serial.println("Cannot unload while in water.");
     }
    else if (!sensorPresent){
