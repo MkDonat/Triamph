@@ -107,6 +107,8 @@ void setup(){
     Serial.println("LittleFS Mount Failed");
     //return;
   }
+  // --- SENSOR FUSION ---
+    //setup_sensor_fusion();
   //updating varriables from flash
   getting_char_datas_from_flash();
   deserialize_JSONdatas();

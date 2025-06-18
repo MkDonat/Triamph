@@ -1,6 +1,5 @@
 #define CORE_1 0
 #define CORE_2 1
-#include <Adafruit_PCF8574.h>
 #include "ESP32_NOW.h"
 #include "WiFi.h"
 //#include <esp_mac.h>  // For the MAC2STR and MACSTR macros
@@ -52,7 +51,7 @@ TaskHandle_t xTask_left_joystick_Handle = NULL;
 
 
 void setup(){
-  //setCpuFrequencyMhz(80);
+  setCpuFrequencyMhz(80);
   //communications
   Serial.begin(SYSTEM_BAUD_RATE);
   //left joystick
