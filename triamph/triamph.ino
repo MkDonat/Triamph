@@ -25,6 +25,7 @@ enum TRIAMPH_MILIEU{
   ON_WATER,
   ON_LAND
 };
+TRIAMPH_MILIEU TRIAMPH_CURRENT_MILIEU = ON_LAND;
 
 //Servos (general)
 enum servo_states{
@@ -43,14 +44,14 @@ Servo sg90_droit;
 Servo sg90_gauche;
 uint16_t sg90_left_last_consigne = 0;
 uint16_t sg90_right_last_consigne = 0;
-const uint8_t sg90_left_start_pose = 90;
-const uint8_t sg90_left_end_pose = 179;
-const uint8_t sg90_right_start_pose = 1;
-const uint8_t sg90_right_end_pose = 90;
+const uint8_t sg90_left_start_pose = 70;
+const uint8_t sg90_left_end_pose = 6;
+const uint8_t sg90_right_start_pose = 150;
+const uint8_t sg90_right_end_pose = 70;
 const uint16_t sg90_step = 1;
 uint16_t sg90_roll_speed = 100; //0-100
 uint16_t sg90_rollback_speed = 100; //0-100
-bool sg90_reverse_kinematic = true;
+bool sg90_reverse_kinematic = false;
 bool is_OC_Clamps_task_complete = false;
 const uint16_t OC_Time = 5000;
 
@@ -68,11 +69,12 @@ const uint8_t ds3218_end_pose = 1;
 const uint16_t ds3218_step = 1;
 uint16_t ds3218_roll_speed = 20; //0-100
 uint16_t ds3218_rollback_speed = 20; //0-100
-bool ds3218_reverse_kinematic = true;
+bool ds3218_reverse_kinematic = false;
 bool is_LoadUnload_task_complete = false;
 const uint16_t LoadUnload_Time = 15000;
 
 // === Water sensor ===
+bool is_on_water = false;
 const int sensorPin = 34; // Analog-capable pin on ESP32
 int sensorValue = 0;
 bool sensorPresent = true;
@@ -123,10 +125,10 @@ void setup(){
   sg90_droit.attach(sg90_droit_pin);
   sg90_gauche.attach(sg90_gauche_pin);
   //Servos-set latest known poses
-  ds3218_droit.write(ds3218_right_last_consigne);
+  /*ds3218_droit.write(ds3218_right_last_consigne);
   ds3218_gauche.write(ds3218_left_last_consigne);
   sg90_droit.write(sg90_right_last_consigne);
-  sg90_gauche.write(sg90_left_last_consigne);
+  sg90_gauche.write(sg90_left_last_consigne);*/
   //let servos get to the pose
   delay(100);
   //Servos-dettach
@@ -146,5 +148,10 @@ void loop(){
   system_state_machine_execute();
   vTaskDelay(pdMS_TO_TICKS(10));
   //Serial.printf("sg90:%d , ds3218:%d\n",sg90_last_consigne_pose,ds3218_last_consigne_pose);
+  if(is_on_water){
+    TRIAMPH_CURRENT_MILIEU = ON_WATER;
+  }else{
+    TRIAMPH_CURRENT_MILIEU = ON_LAND;
+  }
   operating_water_sensor();
 }

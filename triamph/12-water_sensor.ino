@@ -1,5 +1,3 @@
-bool is_on_water = false;
-
 // === Water Sensor Functions ===
 void setup_water_sensor() {
   pinMode(sensorPin, INPUT);
@@ -39,5 +37,8 @@ void operating_water_sensor(){
     is_on_water = false;
     waterSensorError = false;
   }
+
+  //Update sending datas
+  SendingData.is_on_water = is_on_water;
 
 }

@@ -5,13 +5,13 @@ void onEnter_YAW_CONTROL(){
 void onRun_YAW_CONTROL(){
   if(YAW_CONTROL_MODE == YAW_CLOCKWISE){
     raw_duty = map(
-      *YAWL_FORCE, 2047, 0
+      *YAWL_FORCE, 2047, 4095
       , 
       0, duty_map_max
     );
   }else if(YAW_CONTROL_MODE == YAW_COUNTERCLOCKWISE){
     raw_duty = map(
-      *YAWL_FORCE, 2047, 4095
+      *YAWL_FORCE, 2047, 0
       ,
       0,duty_map_max
     );

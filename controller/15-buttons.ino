@@ -27,6 +27,16 @@ void onLongPress_A(){
 void duringLongPress_A(){
   writting_button_message("");
 }
+/* -L3- */
+void onClick_L3(){
+  writting_button_message("L3_Click");
+}
+void onLongPress_L3(){
+  writting_button_message("L3_Long_Press");
+}
+void duringLongPress_L3(){
+  writting_button_message("");
+}
 /* -X- */
 void onClick_X(){
   writting_button_message("X_click");

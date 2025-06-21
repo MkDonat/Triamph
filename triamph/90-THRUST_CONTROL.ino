@@ -5,13 +5,13 @@ void onEnter_THRUST_CONTROL(){
 void onRun_THRUST_CONTROL(){
   if(THRUST_CONTROL_MODE == THRUST_FORWARD){
     raw_duty = map(
-      *THRUST_FORCE, 2047, 0
+      *THRUST_FORCE, 2047, 4095
       ,
       0,duty_map_max
     );
   }else if(THRUST_CONTROL_MODE == THRUST_BACKWARD){
     raw_duty = map(
-      *THRUST_FORCE, 2047, 4095
+      *THRUST_FORCE, 2047, 0
       ,
       0,duty_map_max
     );

@@ -10,8 +10,8 @@ typedef struct {
   int16_t rest_point_y_data;
   int8_t  *tor_x = &SendingData.L_J_tor_x;
   int8_t  *tor_y = &SendingData.L_J_tor_y;
-  int16_t x_err = 30;
-  int16_t y_err = 30;
+  int16_t x_err = 50;
+  int16_t y_err = 50;
   const int16_t input_resolution = 12;
   const int16_t output_resolution = 12;
   bool printOnSerial = true;
@@ -55,12 +55,12 @@ uint8_t tor_joystick_output(uint16_t data, uint8_t resolution, int16_t error){
 
   if(data > mid + error){
 
-    return -1;
+    return 1;
 
   }
   else if(data < mid - error){
 
-    return 1;
+    return -1;
 
   }else 
 

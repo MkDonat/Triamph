@@ -30,10 +30,6 @@ U8G2_SSD1309_128X64_NONAME2_1_4W_SW_SPI u8g2(
   4 // RESET (RES)
 );
 
-//triggers
-uint8_t left_trigger_pin = 33;
-uint8_t right_trigger_pin = 32;
-
 //left joystick
 uint8_t left_joystick_pin_x = 35;
 uint8_t left_joystick_pin_y = 34;
@@ -41,10 +37,13 @@ uint8_t left_joystick_pin_y = 34;
 //Buttons pins
 uint8_t B_button_pin = 13;
 uint8_t A_button_pin = 14;
+uint8_t L3_button_pin = 26;
+
 
 //Buttons
 OneButton B_button;
 OneButton A_button;
+OneButton L3_button;
 
 //-----FreeRTOS-----
 TaskHandle_t xTask_left_joystick_Handle = NULL;
@@ -57,9 +56,10 @@ void setup(){
   //left joystick
   pinMode(left_joystick_pin_x, INPUT);
   pinMode(left_joystick_pin_y, INPUT);
-  //Buttons B PIN SETUP
+  //Buttons SETUP
   pinMode(B_button_pin, INPUT_PULLUP);
   pinMode(A_button_pin, INPUT_PULLUP);
+  pinMode(L3_button_pin, INPUT_PULLUP);
   //Buttons Callbacks
   //B->
   B_button.attachClick(onClick_B);
@@ -71,6 +71,11 @@ void setup(){
   A_button.attachLongPressStart(onLongPress_A);
   A_button.attachDuringLongPress(duringLongPress_A);
   A_button.setLongPressIntervalMs(1000);
+  //L3->
+  L3_button.attachClick(onClick_L3);
+  L3_button.attachLongPressStart(onLongPress_L3);
+  L3_button.attachDuringLongPress(duringLongPress_L3);
+  L3_button.setLongPressIntervalMs(1000);
   //FREERTOS TASKS
     //CreateTasksForJoystick();
   setup_broadcast();
@@ -82,12 +87,13 @@ void loop(){
   //Buttons tick
   B_button.tick(digitalRead(B_button_pin) == LOW);
   A_button.tick(digitalRead(A_button_pin) == LOW);
+  L3_button.tick(digitalRead(L3_button_pin) == LOW);
   //ESP-NOW
   broadcast();
   //State machine
   csm_execute();
   //Handle buttons message
-  if(B_button.isIdle() == true && A_button.isIdle() == true){
+  if(B_button.isIdle() == true && A_button.isIdle() == true && L3_button.isIdle() == true){
     writting_button_message("");
   }
   vTaskDelay(pdMS_TO_TICKS(10));

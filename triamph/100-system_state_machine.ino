@@ -80,68 +80,63 @@ bool transition_14(){
 void setup_ssm(){
   //fsm -> adding new states
   State* STARTING = ssm.addState(
-    "Etat Transitoire, nécessaire pour"
-    "un bon fonctionnement de"
-    "la machine à état...",
+    "Starting",
     nullptr, //onEnter_...
     onExit_STARTING,
     nullptr //onRun_...
   );
 
   State* SETTING = ssm.addState(
-    "Arrêt total, modification" 
-    "des paramètres en cours...",
+    "Setting" ,
     onEnter_SETTING,
     onExit_SETTING,
     onRun_SETTING
   );
 
   State* IDLE = ssm.addState(
-    "Tous les actionneurs en position défaut,"
-    "Aucun instrument (capteur) activé/utilisé",
+    "Idle",
     onEnter_IDLE,
     onExit_IDLE,
     onRun_IDLE
   );
 
   State* COLLECTING = ssm.addState(
-    "Collecte des déchets, ensuite"
-    "retour à la position défaut",
+    "Collecting",
     onEnter_COLLECTING,
     onExit_COLLECTING,
     onRun_COLLECTING
   );
 
   State* OC_CLAMPS = ssm.addState( //OC -> CLOSING/OPENING CLAMPS
-    "Ouverture/fermeture des pinces",
+    "Clamps",
     onEnter_OC_CLAMPS,
     onExit_OC_CLAMPS,
     onRun_OC_CLAMPS
   );
 
   State* BACK2HOME = ssm.addState(
-    "Retour à la maison",
+    "Back2Home",
     onEnter_BACK2HOME,
     onExit_BACK2HOME,
     onRun_BACK2HOME
   );
 
   State* LU = ssm.addState( // LU -> Loading Unloading
-    "Chargement/Déchargement du bac",
+    "Load/Unload",
     onEnter_LU,
     onExit_LU,
     onRun_LU
   );
 
   State* YAW_CONTROL = ssm.addState(
-    "Rotation",
+    "Yaw",
     onEnter_YAW_CONTROL,
     onExit_YAW_CONTROL,
     onRun_YAW_CONTROL
   );
 
   State* THRUST_CONTROL = ssm.addState(
-    "POUSSÉE/GAZ",
+    "Thrust",
     onEnter_THRUST_CONTROL,
     onExit_THRUST_CONTROL,
     onRun_THRUST_CONTROL
@@ -178,4 +173,7 @@ void setup_ssm(){
 }
 void system_state_machine_execute(){
   ssm.execute();
+  // --- update datas ---
+  strncpy(SendingData.active_state_name, ssm.getActiveStateName(), sizeof(SendingData.active_state_name) - 1);
+  SendingData.active_state_name[sizeof(SendingData.active_state_name) - 1] = '\0';
 }
