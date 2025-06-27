@@ -14,6 +14,17 @@
 #ifdef U8X8_HAVE_HW_I2C
 #include <Wire.h>
 #endif
+//INA219
+#ifndef WIRE_H
+#ifndef ARDAFRUIT_INA219_H
+#include <Wire.h>
+#include <Adafruit_INA219.h>
+#endif
+#endif
+
+//INA219
+Adafruit_INA219 ina219;
+float battery_level_percentage = 0.0;
 
 //SPI setup pins (SCREEN)
 U8G2_SSD1309_128X64_NONAME2_1_4W_SW_SPI u8g2(
@@ -34,33 +45,30 @@ U8G2_SSD1309_128X64_NONAME2_1_4W_SW_SPI u8g2(
 uint8_t left_joystick_pin_x = 35;
 uint8_t left_joystick_pin_y = 34;
 
-//Buttons pins
+//Buttons
+OneButton B_button;
+OneButton A_button;
+OneButton L3_button;
 uint8_t B_button_pin = 13;
 uint8_t A_button_pin = 14;
 uint8_t L3_button_pin = 26;
 
 
-//Buttons
-OneButton B_button;
-OneButton A_button;
-OneButton L3_button;
-
-//-----FreeRTOS-----
-TaskHandle_t xTask_left_joystick_Handle = NULL;
-
-
 void setup(){
-  setCpuFrequencyMhz(80);
-  //communications
+  //we setup a lower frequency to minimize battery consumption
+  setCpuFrequencyMhz(80); // 240Mhz is the maximum
+  //serial communication
   Serial.begin(SYSTEM_BAUD_RATE);
-  //left joystick
+  //INA219 setup
+  ina219_setup();
+  //left joystick pin setup
   pinMode(left_joystick_pin_x, INPUT);
   pinMode(left_joystick_pin_y, INPUT);
-  //Buttons SETUP
+  //Buttons pin setup
   pinMode(B_button_pin, INPUT_PULLUP);
   pinMode(A_button_pin, INPUT_PULLUP);
   pinMode(L3_button_pin, INPUT_PULLUP);
-  //Buttons Callbacks
+  //Buttons Callbacks setup
   //B->
   B_button.attachClick(onClick_B);
   B_button.attachLongPressStart(onLongPress_B);
@@ -76,11 +84,12 @@ void setup(){
   L3_button.attachLongPressStart(onLongPress_L3);
   L3_button.attachDuringLongPress(duringLongPress_L3);
   L3_button.setLongPressIntervalMs(1000);
-  //FREERTOS TASKS
-    //CreateTasksForJoystick();
+  //FreeRTOS task creation
+  create_task_for_ina219();
+  CreateTasksForLeftJoystick();
+  CreateTasksForScreen();
+  //Esp Now communication setup
   setup_broadcast();
-  //Controller state machine
-  setup_csm();
 }
 
 void loop(){
@@ -90,11 +99,10 @@ void loop(){
   L3_button.tick(digitalRead(L3_button_pin) == LOW);
   //ESP-NOW
   broadcast();
-  //State machine
-  csm_execute();
   //Handle buttons message
   if(B_button.isIdle() == true && A_button.isIdle() == true && L3_button.isIdle() == true){
     writting_button_message("");
   }
+  //wait
   vTaskDelay(pdMS_TO_TICKS(10));
 }

@@ -98,10 +98,6 @@ void xTask_OC_TimerCallback(TimerHandle_t xTimer);
 void xTask_LoadUnload_TimerCallback(TimerHandle_t xTimer);
 
 void setup(){
-  //Moniteur d’exception Expressif
-    //->esp_log_level_set("*", ESP_LOG_VERBOSE);
-  //Cpu frequency
-    //->setCpuFrequencyMhz(80);
   //Serial Communications
   Serial.begin(SYSTEM_BAUD_RATE);
   //File system begin
@@ -109,8 +105,6 @@ void setup(){
     Serial.println("LittleFS Mount Failed");
     //return;
   }
-  // --- SENSOR FUSION ---
-    //setup_sensor_fusion();
   //updating varriables from flash
   getting_char_datas_from_flash();
   deserialize_JSONdatas();
@@ -147,7 +141,6 @@ void loop(){
   broadcast();//Esp-now communication
   system_state_machine_execute();
   vTaskDelay(pdMS_TO_TICKS(10));
-  //Serial.printf("sg90:%d , ds3218:%d\n",sg90_last_consigne_pose,ds3218_last_consigne_pose);
   if(is_on_water){
     TRIAMPH_CURRENT_MILIEU = ON_WATER;
   }else{

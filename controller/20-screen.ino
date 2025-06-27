@@ -10,22 +10,26 @@ static const unsigned char image_pixel_art_fish_bits[] = {0x00,0x00,0x00,0x00,0x
 char speed_buffer[15];
 char current_state_buffer[15];
 char gaz_buffer[15];
-char battery_level_buffer[15];
+char controller_battery_level_buffer[15];
+char triamph_battery_level_buffer[15];
 
 void vTaskScreenUpdate(void *arg){
+
   // --- Starting screen ---//
   u8g2.begin();
 
   // --- Initializing vars ---
     // -> current state
   strncpy(receivedData.active_state_name, "No signal", sizeof(receivedData.active_state_name) - 1);
-  current_state_buffer[sizeof(receivedData.active_state_name) - 1] = '\0';  // Assure la terminaison nulle
-  // -> gaz
+  current_state_buffer[sizeof(receivedData.active_state_name) - 1] = '\0';  // Ensures null termination
+    // -> gaz
   strncpy(gaz_buffer, "0", sizeof(gaz_buffer) - 1);
-  current_state_buffer[sizeof(gaz_buffer) - 1] = '\0';  // Assure la terminaison nulle
+  current_state_buffer[sizeof(gaz_buffer) - 1] = '\0';  // Ensures null termination
 
   for(;;){
+
     u8g2.firstPage();
+
     do{
       u8g2.clearBuffer();
       u8g2.setFontMode(1);
@@ -37,8 +41,9 @@ void vTaskScreenUpdate(void *arg){
       u8g2.drawStr(60, 30, speed_buffer);
 
       // triamph battery level
+      snprintf(triamph_battery_level_buffer, sizeof(triamph_battery_level_buffer), "%u", 0);
       u8g2.setFont(u8g2_font_6x10_tr);
-      u8g2.drawStr(12, 13, "100");
+      u8g2.drawStr(12, 13, triamph_battery_level_buffer);
 
       // label % triamph
       u8g2.drawStr(30, 13, "%");
@@ -63,8 +68,9 @@ void vTaskScreenUpdate(void *arg){
       }
 
       // controller battery level
+      snprintf(controller_battery_level_buffer, sizeof(controller_battery_level_buffer), "%u", (unsigned int)battery_level_percentage);
       u8g2.setFont(u8g2_font_6x10_tr);
-      u8g2.drawStr(91, 13, "100");
+      u8g2.drawStr(91, 13, controller_battery_level_buffer);
 
       // label - mps
       u8g2.setFont(u8g2_font_6x13_tr);
@@ -80,24 +86,23 @@ void vTaskScreenUpdate(void *arg){
         ramp_h = map(*L_J.y_fixed_datas, 2047, 4095, 3, 36);
         u8g2.drawBox(116, ramp_y, 4, ramp_h);
       }
-       
 
       // gaz rect
       u8g2.drawFrame(116, 20, 5, 37);
 
       // --- label current state ---
       strncpy(current_state_buffer, receivedData.active_state_name, sizeof(current_state_buffer) - 1);
-      current_state_buffer[sizeof(current_state_buffer) - 1] = '\0';  // Assure la terminaison nulle
+      current_state_buffer[sizeof(current_state_buffer) - 1] = '\0';  // Ensures null termination
     
       u8g2.setFont(u8g2_font_4x6_tr);
       u8g2.drawStr(47, 50, current_state_buffer);
 
       // --- carb or fish
       if(receivedData.is_on_water){
-        //pixel_art_fish
+        // pixel_art_fish
         u8g2.drawXBM(3, 18, 35, 35, image_pixel_art_fish_bits);
       }else{
-        //crab
+        // pixel_art_crab
         u8g2.drawXBM(7, 20, 35, 35, image_crab_bits);
       } 
 
@@ -105,16 +110,18 @@ void vTaskScreenUpdate(void *arg){
       u8g2.sendBuffer();
     }
     while(u8g2.nextPage());
-    //vTaskDelay(pdMS_TO_TICKS(10));
+    vTaskDelay(pdMS_TO_TICKS(10));
   }
 }
 void CreateTasksForScreen(){
   xTaskCreatePinnedToCore(
-    vTaskScreenUpdate,"screen refresh"
+    vTaskScreenUpdate
     ,
-     2048
+    "screen update task"
     ,
-    NULL
+     2048 //stack in word (not bytes)
+    ,
+    NULL //params
     ,
     1 //Priority
     ,
