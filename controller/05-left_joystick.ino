@@ -65,7 +65,7 @@ uint16_t fix_raw_datas(uint16_t raw_datas, uint16_t rest_datas, uint16_t error, 
   }else return output_mid;
 }
 
-uint8_t tor_joystick_output(uint16_t data, uint8_t resolution, int16_t tolerance){
+uint8_t tor_joystick_output(int16_t data, uint8_t resolution, int16_t tolerance){
 
   /*
     This program was written by Martial M (P2026) for triamph-project at Icam Bretagne.
@@ -106,21 +106,48 @@ void vTaskLeftJoystickInputs(void *arg){
   for(;;){
 
     // --- Getting raw datas ---
-    analogRead(*L_J.x_pin);
-    vTaskDelay(pdMS_TO_TICKS(10));
-    L_J.x_raw_datas = analogRead(*L_J.x_pin);
-    vTaskDelay(pdMS_TO_TICKS(10));
-    analogRead(*L_J.y_pin);
-    vTaskDelay(pdMS_TO_TICKS(10));
-    L_J.y_raw_datas= analogRead(*L_J.y_pin);
+    if(gamepadMode==false){
+      analogRead(*L_J.x_pin);
+      vTaskDelay(pdMS_TO_TICKS(10));
+      L_J.x_raw_datas = analogRead(*L_J.x_pin);
+      vTaskDelay(pdMS_TO_TICKS(10));
+      analogRead(*L_J.y_pin);
+      vTaskDelay(pdMS_TO_TICKS(10));
+      L_J.y_raw_datas= analogRead(*L_J.y_pin);
+    }
 
     // --- Fixing joystick raw datas ---
-    *L_J.x_fixed_datas = fix_raw_datas(L_J.x_raw_datas, 1723, L_J.x_err, L_J.input_resolution, L_J.output_resolution);
-    *L_J.y_fixed_datas = fix_raw_datas(L_J.y_raw_datas, 1813, L_J.y_err, L_J.input_resolution, L_J.output_resolution);
-
+    if(gamepadMode==false){
+      *L_J.x_fixed_datas = fix_raw_datas(L_J.x_raw_datas, 1723, L_J.x_err, L_J.input_resolution, L_J.output_resolution);
+      *L_J.y_fixed_datas = fix_raw_datas(L_J.y_raw_datas, 1813, L_J.y_err, L_J.input_resolution, L_J.output_resolution);
+    }
+    // --- Same but for gamepad --- added on dec 02 2025 ....
+    if(gamepadMode==true){
+      *L_J.y_fixed_datas = /*range[0<-2047->4095]*/
+          fix_raw_datas(
+            map(getUmapValue(gamepad_datas, "righttrigger", 0),0,32767,0,65535), 
+            /*rest value =*/0, /*error =*/0, /*input res =*/16, /*output res =*/12
+        )
+        -
+          fix_raw_datas(
+            getUmapValue(gamepad_datas, "lefttrigger", 0)/*range (0,32767)*/, 
+            /*rest value =*/32767, /*error =*/0, /*input res =*/16, /*output res =*/12
+        );
+      //Serial.printf("Trigger: %d ;",*L_J.y_fixed_datas);
+      *L_J.x_fixed_datas = fix_raw_datas(
+        map(getUmapValue(gamepad_datas, "leftx", 0),-32768,32767,0,65535),
+        /*rest value =*/32768, /*error =*/5000, /*input res =*/16, /*output res =*/12
+      );
+      //Serial.printf("leftx: %d ",*L_J.x_fixed_datas);
+    }
+    
     // --- TOR output ---
     *L_J.tor_x = tor_joystick_output(*L_J.x_fixed_datas, L_J.output_resolution, L_J.tor_x_tolerance);
     *L_J.tor_y = tor_joystick_output(*L_J.y_fixed_datas, L_J.output_resolution, L_J.tor_y_tolerance);
+
+    if(gamepadMode==true){
+      //Serial.printf("torx:%d; tory:%d\n",*L_J.tor_x,*L_J.tor_y);
+    }
 
     // --- print to serial ---
     if(L_J.printOnSerial){

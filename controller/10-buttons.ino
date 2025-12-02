@@ -37,3 +37,9 @@ void onLongPress_L3(){
 void duringLongPress_L3(){
   writting_button_message("");
 }
+/* */
+void onClick_ShareBtn(){
+  gamepadMode = !gamepadMode;
+  Serial.printf("Game pad Mode: %d\n",gamepadMode);
+  //writting_button_message("ShareBtn_Click");
+}

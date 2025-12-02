@@ -7,7 +7,7 @@ void ina219_setup(){
   // you can call a setCalibration function to change this range (see comments).
   if (! ina219.begin()) {
     Serial.println("Failed to find INA219 chip");
-    while (1) { delay(10); }
+    //while (1) { delay(10); }
   }
   // To use a slightly lower 32V, 1A range (higher precision on amps):
   ina219.setCalibration_32V_1A();
@@ -44,13 +44,13 @@ void ina219_task(void *args){
       }
     }
       
-    Serial.print("Bus Voltage:   "); Serial.print(busvoltage); Serial.println(" V");
-    Serial.print("Shunt Voltage: "); Serial.print(shuntvoltage); Serial.println(" mV");
-    Serial.print("Load Voltage:  "); Serial.print(loadvoltage); Serial.println(" V");
-    Serial.print("Current:       "); Serial.print(current_mA); Serial.println(" mA");
-    Serial.print("Power:         "); Serial.print(power_mW); Serial.println(" mW");
-    Serial.print("Percentage:    "); Serial.print(battery_percentage); Serial.println(" %");
-    Serial.println("");
+    // Serial.print("Bus Voltage:   "); Serial.print(busvoltage); Serial.println(" V");
+    // Serial.print("Shunt Voltage: "); Serial.print(shuntvoltage); Serial.println(" mV");
+    // Serial.print("Load Voltage:  "); Serial.print(loadvoltage); Serial.println(" V");
+    // Serial.print("Current:       "); Serial.print(current_mA); Serial.println(" mA");
+    // Serial.print("Power:         "); Serial.print(power_mW); Serial.println(" mW");
+    // Serial.print("Percentage:    "); Serial.print(battery_percentage); Serial.println(" %");
+    // Serial.println("");
     vTaskDelay(pdMS_TO_TICKS(2000));
   }
 
